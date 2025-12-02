@@ -6,3 +6,8 @@ export const registerSchema = zod.object({
     username: zod.string().min(4).max(15),
     password: zod.string().min(3).max(10),
 });
+
+export const loginSchema = zod.object({
+    username: zod.string().min(4).max(15),
+    password: zod.string().min(3).max(10)
+})

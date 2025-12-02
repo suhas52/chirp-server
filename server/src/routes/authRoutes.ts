@@ -71,7 +71,7 @@ authRouter.post("/login", async (req: Request, res: Response) => {
         const passwordMatch = await bcrypt.compare(formData.password, user.passwordHash)
         if (!passwordMatch) throw new Error("Invalid credentials")
         const accessToken = jwt
-            .sign({id: user.id}, SECRET, {
+            .sign({id: user.id, username: user.username}, SECRET, {
                 expiresIn: 7 * 24 * 60 * 60,
                 
             })
@@ -86,6 +86,17 @@ authRouter.post("/login", async (req: Request, res: Response) => {
         
     } catch (err: any) {
         return failureResponse(res, 400, err.message)
+    }
+})
+
+authRouter.post("/logout", async (req: Request, res: Response) => {
+    try {
+        
+        if (!req.cookies.token) throw new Error("User not logged in")
+        successResponse(res.clearCookie("token"), 200, {})
+        
+    } catch (err: any) {
+        return failureResponse(res, 400, err.message);
     }
 })
 

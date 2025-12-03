@@ -1,14 +1,13 @@
 
 import express from 'express'
 import cors from 'cors'
-import { configDotenv } from 'dotenv';
 import { authRouter } from './routes/authRoutes.ts';
 import { userRouter } from './routes/crudRoutes.ts';
 import cookieParser from 'cookie-parser'
+import envConf from './lib/envConfig.ts'
 
-configDotenv();
-if (!process.env.SERVER_PORT) throw new Error("Please make sure SERVER_PORT is available in your environment");
-const PORT = Number(process.env.SERVER_PORT);
+
+const PORT = envConf.SERVER_PORT;
 
 
 

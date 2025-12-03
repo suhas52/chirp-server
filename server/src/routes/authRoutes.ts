@@ -4,12 +4,11 @@ import { failureResponse, successResponse } from "../lib/response.ts";
 import { loginSchema, profileSchema, registerSchema } from "../zodSchemas/authSchemas.ts";
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import envConf from "../lib/envConfig.ts";
 
-if (!process.env.JWT_SECRET) throw new Error("Please ensure the JWT_SECRET exists in your environment")
-    if (!process.env.SALT) throw new Error("Please ensure SALT exists in your environment")
         
-const SALT = Number(process.env.SALT);
-const SECRET = String(process.env.JWT_SECRET);
+const SALT = envConf.SALT;
+const SECRET = envConf.JWT_SECRET;
 
 interface DecodedUser {
     id: string;

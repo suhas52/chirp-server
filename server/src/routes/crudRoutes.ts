@@ -21,11 +21,11 @@ userRouter.post("/post", async (req: Request, res: Response) => {
     const accessToken = req.cookies.token;
     try {
         if (!accessToken) throw new Error("User is not logged in")
-        if (!formData) throw new Error("Invalid data")
-        if (profanity.exists(formData.content)) throw new Error("Profanity is not allowed")
-        const inputValidation = postSchema.safeParse(formData)
+            if (!formData) throw new Error("Invalid data")
+                if (profanity.exists(formData.content)) throw new Error("Profanity is not allowed")
+                    const inputValidation = postSchema.safeParse(formData)
         if (!inputValidation.success) throw new Error("Invalid input")
-        const decodedUser = jwt.decode(accessToken) as DecodedUser;
+            const decodedUser = jwt.decode(accessToken) as DecodedUser;
         const newPost = await prisma.post.create({
             data: {
                 userId: decodedUser.id, ...formData
@@ -49,7 +49,7 @@ userRouter.post("/post", async (req: Request, res: Response) => {
 
 userRouter.get("/posts", async (req: Request, res: Response) => {
     try {
-        const posts = prisma.post.findMany({
+        const posts = await prisma.post.findMany({
             
         })
         return successResponse(res, 200, posts)
@@ -62,19 +62,47 @@ userRouter.get("/posts", async (req: Request, res: Response) => {
 })
 
 userRouter.get("/post/:postId", async (req: Request, res: Response) => {
-
+    const postId = req.params['postId'];
+    try {
+        if (!postId) throw new Error("Invalid request")
+            const post = await prisma.post.findUnique({
+            where: {
+                id: postId
+            }
+        })
+        return successResponse(res, 200, post)
+    } catch (err) {
+        if (err instanceof Error) {
+            return failureResponse(res, 400, err.message)
+        }
+        return failureResponse(res, 400, "An unknown error occured")
+    }
 })
 
 
 
 userRouter.get("/posts/:userId", async (req: Request, res: Response) => {
-
+    const userId = req.params['userId'];
+    try {
+        if (!userId) throw new Error("Invalid Request")
+        const posts = await prisma.post.findMany({
+            where: {
+                userId: userId
+            }
+        })
+        return successResponse(res, 200, posts)
+    } catch (err) {
+        if (err instanceof Error) {
+            return failureResponse(res, 400, err.message)
+        }
+        return failureResponse(res, 400, "An unknown error occurred")
+    }
 })
 
 userRouter.post("/comment/:postId", async (req: Request, res: Response) => {
-
+    
 })
 
 userRouter.get("/comments/:postId", async (req: Request, res: Response) => {
-
+    
 })

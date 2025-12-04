@@ -13,6 +13,11 @@ function generateFastRandomString(length: number) {
     return Math.random().toString(36).substring(2, length + 2);
 }
 
+interface NewPostData {
+    userId: String,
+    content: String
+}
+
 export const seedRouter = Router();
 
 seedRouter.post("/register/:userNumber", async (req: Request, res: Response) => {
@@ -34,22 +39,23 @@ seedRouter.post("/register/:userNumber", async (req: Request, res: Response) => 
     return successResponse(res, 200, {users})
 })
 
-seedRouter.post("/post/:postNumber", async (req: Request, res: Response) => {
-    const postNumber = Number(req.params['postNumber'])
-    const userIds = await prisma.user.findMany({
-        select: {id: true}
-    })
-    const posts = [];
-    for (let i = 1; i <= postNumber; i++) {
-        let randomArrayIndex = Math.floor(Math.random() * userIds.length);
-        const newPostData = {
-            userId: userIds[randomArrayIndex]?.id,
-            content: generateFastRandomString(40)
-        }
-        const newPost = await prisma.post.create({
-            data: newPostData
-        })
-        posts.push(newPost)
-    }
-    return successResponse(res, 200, posts)
-})
+// seedRouter.post("/post/:postNumber", async (req: Request, res: Response) => {
+//     const postNumber = Number(req.params['postNumber'])
+//     const userIds = await prisma.user.findMany({
+//         select: {id: true}
+//     })
+//     if (!userIds) throw new Error()
+//     const posts = [];
+//     for (let i = 1; i <= postNumber; i++) {
+//         let randomArrayIndex = Math.floor(Math.random() * userIds.length);
+//         const newPostData: NewPostData = {
+//             userId: userIds[randomArrayIndex].id,
+//             content: generateFastRandomString(40)
+//         }
+//         const newPost = await prisma.post.create({
+//             data: newPostData
+//         })
+//         posts.push(newPost)
+//     }
+//     return successResponse(res, 200, posts)
+// })

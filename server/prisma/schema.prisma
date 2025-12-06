@@ -14,18 +14,18 @@ datasource db {
 }
 
 model User {
-  id           String    @id @default(uuid())
-  username     String    @unique
-  avatarUrl    String?
-  firstName    String
-  lastName     String
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  passwordHash String
-  posts        Post[]
-  likes        Like[]
-  retweets     Retweet[]
-  comments     Comment[]
+  id             String    @id @default(uuid())
+  username       String    @unique
+  avatarFileName String    @default("default-avatar.png")
+  firstName      String
+  lastName       String
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  passwordHash   String
+  posts          Post[]
+  likes          Like[]
+  retweets       Retweet[]
+  comments       Comment[]
 }
 
 model Post {

@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 import { failureResponse, successResponse } from "../lib/response.ts";
 import { profanity, CensorType } from '@2toad/profanity';
 import { postSchema } from "../zodSchemas/crudSchemas.ts";
-import { prisma } from "../generated/prisma/prisma.ts";
+import { prisma } from "../lib/prismaConfig.ts";
 
 
 interface DecodedUser {

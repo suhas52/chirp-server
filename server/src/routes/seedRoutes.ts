@@ -1,7 +1,7 @@
 import { Router, type Request, type Response } from "express";
 import envConf from "../lib/envConfig.ts";
 import { registerSchema } from "../zodSchemas/authSchemas.ts";
-import { prisma } from '../generated/prisma/prisma.ts';
+import { prisma } from '../lib/prismaConfig.ts';
 import bcrypt from 'bcryptjs';
 import { successResponse } from "../lib/response.ts";
 

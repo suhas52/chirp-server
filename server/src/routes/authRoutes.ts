@@ -1,5 +1,5 @@
 import { Router, type Request, type Response } from "express";
-import { prisma } from '../generated/prisma/prisma.ts';
+import { prisma } from '../lib/prismaConfig.ts';
 import { failureResponse, successResponse } from "../lib/response.ts";
 import { loginSchema, profileSchema, registerSchema } from "../zodSchemas/authSchemas.ts";
 import bcrypt from 'bcryptjs';
@@ -7,6 +7,7 @@ import jwt from 'jsonwebtoken';
 import envConf from "../lib/envConfig.ts";
 import multer from 'multer'
 import sharp from 'sharp';
+import { uploadToCloud } from "../lib/s3Config.ts";
 
 const SALT = envConf.SALT;
 const SECRET = envConf.JWT_SECRET;
@@ -153,14 +154,24 @@ authRouter.patch("/profile", async (req: Request, res: Response) => {
 })
 
 authRouter.post("/update-avatar", upload.single('avatar'), async (req: Request, res: Response) => {
-
+    const accessToken = req.cookies.token
     const image = req.file;
 
     try {
+        if (!req.cookies.token) throw new Error("User not logged in")
+        const accessToken = req.cookies.token;
+        const decodedUser = jwt.verify(accessToken, SECRET) as DecodedUser;
         if (!image) throw new Error("No image provided")
         if (!ALLOWED_FILE_TYPES.includes(image.mimetype)) throw new Error("Invalid file type")
-        const processedImage = await sharp(image.buffer).resize(200).toBuffer();
-
+        const processedImageBuffer = await sharp(image.buffer).resize(200).png().toBuffer();
+        const avatarFileName = await uploadToCloud(processedImageBuffer);
+        const updatedAvatarFileName = prisma.user.update({
+            where: { id: decodedUser.id },
+            data: {
+                avatarFileName: avatarFileName
+            }
+        })
+        return successResponse(res, 200, { avatarFileName: avatarFileName })
 
     } catch (err) {
         if (err instanceof Error) {

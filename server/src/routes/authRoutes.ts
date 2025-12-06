@@ -7,7 +7,7 @@ import jwt from 'jsonwebtoken';
 import envConf from "../lib/envConfig.ts";
 import multer from 'multer'
 import sharp from 'sharp';
-import { uploadToCloud } from "../lib/s3Config.ts";
+import { getSignedImageUrl, uploadToCloud } from "../lib/s3Config.ts";
 
 const SALT = envConf.SALT;
 const SECRET = envConf.JWT_SECRET;
@@ -121,7 +121,19 @@ authRouter.get("/me", async (req: Request, res: Response) => {
     const accessToken = req.cookies.token;
     try {
         const decodedUser = jwt.verify(accessToken, SECRET) as DecodedUser;
-        return successResponse(res, 200, decodedUser)
+        const user = await prisma.user.findUnique({
+            where: { id: decodedUser.id },
+            select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                username: true,
+                avatarFileName: true
+            }
+        })
+        if (!user) throw new Error("User does not exist")
+        const avatarUrl = await getSignedImageUrl(user.avatarFileName)
+        return successResponse(res, 200, { ...user, avatarUrl })
     } catch (err) {
         return failureResponse(res, 400, "Invalid token")
     }
@@ -153,7 +165,7 @@ authRouter.patch("/profile", async (req: Request, res: Response) => {
     }
 })
 
-authRouter.post("/update-avatar", upload.single('avatar'), async (req: Request, res: Response) => {
+authRouter.patch("/update-avatar", upload.single('avatar'), async (req: Request, res: Response) => {
     const accessToken = req.cookies.token
     const image = req.file;
 
@@ -179,5 +191,4 @@ authRouter.post("/update-avatar", upload.single('avatar'), async (req: Request, 
         }
         return failureResponse(res, 400, "An unknown error occurred")
     }
-
 })

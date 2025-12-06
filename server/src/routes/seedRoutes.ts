@@ -30,13 +30,13 @@ seedRouter.post("/register/:userNumber", async (req: Request, res: Response) => 
             username: generateFastRandomString(8),
             passwordHash: await bcrypt.hash("Test@123", SALT)
         }
-        
+
         const newUser = await prisma.user.create({
             data: newUserData
         })
         users.push(newUser)
     }
-    return successResponse(res, 200, {users})
+    return successResponse(res, 200, { users })
 })
 
 // seedRouter.post("/post/:postNumber", async (req: Request, res: Response) => {

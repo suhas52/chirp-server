@@ -5,10 +5,14 @@ import { loginSchema, profileSchema, registerSchema } from "../zodSchemas/authSc
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import envConf from "../lib/envConfig.ts";
+import multer from 'multer'
+import { error } from "console";
 
-        
 const SALT = envConf.SALT;
 const SECRET = envConf.JWT_SECRET;
+
+const storage = multer.memoryStorage()
+const upload = multer({ storage: storage })
 
 interface DecodedUser {
     id: string;
@@ -55,12 +59,12 @@ authRouter.post("/register", async (req: Request, res: Response) => {
 
 authRouter.post("/login", async (req: Request, res: Response) => {
     const formData = req.body;
-    
+
     try {
         const inputValidation = loginSchema.safeParse(formData);
         if (!inputValidation.success) throw new Error("Failed to validate input")
-            const user = await prisma.user.findUnique({
-            where: {username: formData.username},
+        const user = await prisma.user.findUnique({
+            where: { username: formData.username },
             select: {
                 id: true,
                 username: true,
@@ -70,22 +74,22 @@ authRouter.post("/login", async (req: Request, res: Response) => {
             },
         })
         if (!user) throw new Error("Invalid credentials")
-            const passwordMatch = await bcrypt.compare(formData.password, user.passwordHash)
+        const passwordMatch = await bcrypt.compare(formData.password, user.passwordHash)
         if (!passwordMatch) throw new Error("Invalid credentials")
-            const accessToken = jwt
-        .sign({id: user.id, username: user.username}, SECRET, {
-            expiresIn: 7 * 24 * 60 * 60,
-            
-        })
-        
+        const accessToken = jwt
+            .sign({ id: user.id, username: user.username }, SECRET, {
+                expiresIn: 7 * 24 * 60 * 60,
+
+            })
+
         res.status(200).cookie("token", accessToken, {
             httpOnly: true,
             maxAge: 7 * 24 * 60 * 60 * 1000
         }).json({
             success: true,
-            data: {id: user.id, username: user.username, firstName: user.firstName, lastName: user.lastName}
+            data: { id: user.id, username: user.username, firstName: user.firstName, lastName: user.lastName }
         })
-        
+
     } catch (err) {
         if (err instanceof Error) {
             console.log(err.message);
@@ -97,10 +101,10 @@ authRouter.post("/login", async (req: Request, res: Response) => {
 
 authRouter.post("/logout", async (req: Request, res: Response) => {
     try {
-        
+
         if (!req.cookies.token) throw new Error("User not logged in")
-            successResponse(res.clearCookie("token"), 200)
-        
+        successResponse(res.clearCookie("token"), 200)
+
     } catch (err) {
         if (err instanceof Error) {
             console.log(err.message);
@@ -112,25 +116,25 @@ authRouter.post("/logout", async (req: Request, res: Response) => {
 
 authRouter.get("/me", async (req: Request, res: Response) => {
     if (!req.cookies.token) return failureResponse(res, 400, "User not logged in")
-        const accessToken = req.cookies.token;
+    const accessToken = req.cookies.token;
     try {
         const decodedUser = jwt.verify(accessToken, SECRET) as DecodedUser;
         return successResponse(res, 200, decodedUser)
     } catch (err) {
         return failureResponse(res, 400, "Invalid token")
     }
-    
+
 })
 
 authRouter.patch("/profile", async (req: Request, res: Response) => {
     const formData = req.body;
     try {
         if (!req.cookies.token) throw new Error("User not logged in")
-            const accessToken = req.cookies.token;
+        const accessToken = req.cookies.token;
         if (!formData) throw new Error("Invalid input.")
-            const inputValidation = profileSchema.safeParse(formData);
+        const inputValidation = profileSchema.safeParse(formData);
         if (!inputValidation.success) throw new Error("Invalid input")
-            const decodedUser = jwt.verify(accessToken, SECRET) as DecodedUser;
+        const decodedUser = jwt.verify(accessToken, SECRET) as DecodedUser;
         const modifiedUser = await prisma.user.update({
             where: {
                 id: decodedUser.id
@@ -145,4 +149,19 @@ authRouter.patch("/profile", async (req: Request, res: Response) => {
         }
         return failureResponse(res, 400, "An unknown error occurred");
     }
+})
+
+authRouter.post("/update-avatar", upload.single('avatar'), async (req: Request, res: Response) => {
+
+    const image = req.file;
+    try {
+        if (!image) throw new Error("No image provided")
+
+    } catch (err) {
+        if (err instanceof Error) {
+            return failureResponse(res, 400, err.message)
+        }
+        return failureResponse(res, 400, "An unknown error occurred")
+    }
+
 })

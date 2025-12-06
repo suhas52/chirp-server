@@ -50,7 +50,7 @@ userRouter.post("/post", async (req: Request, res: Response) => {
 userRouter.get("/posts", async (req: Request, res: Response) => {
     try {
         const posts = await prisma.post.findMany({
-            
+
         })
         return successResponse(res, 200, posts)
     } catch (err) {
@@ -65,7 +65,7 @@ userRouter.get("/post/:postId", async (req: Request, res: Response) => {
     const { postId } = req.params;
     try {
         if (!postId) throw new Error("Invalid request")
-            const post = await prisma.post.findUnique({
+        const post = await prisma.post.findUnique({
             where: {
                 id: postId
             }
@@ -104,7 +104,7 @@ userRouter.post("/comment/:postId", async (req: Request, res: Response) => {
     const { postId } = req.params;
     const accessToken = req.cookies.token;
     try {
-        
+
         if (!postId) throw new Error("Invalid Request")
         if (!accessToken) throw new Error("You cannot comment without being logged in");
         if (!formData) throw new Error("Unable to post an empty form")
@@ -117,11 +117,11 @@ userRouter.post("/comment/:postId", async (req: Request, res: Response) => {
                 content: formData.content
             }
         })
-        return successResponse(res, 201, newComment) 
+        return successResponse(res, 201, newComment)
     } catch (err) {
         if (err instanceof Error) {
             return failureResponse(res, 400, err.message)
-        } 
+        }
         return failureResponse(res, 400, "An unknown error occurred")
     }
 })
@@ -143,3 +143,4 @@ userRouter.get("/comments/:postId", async (req: Request, res: Response) => {
         return failureResponse(res, 400, "An unknown error occurred")
     }
 })
+

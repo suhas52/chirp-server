@@ -6,7 +6,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import envConf from "../lib/envConfig.ts";
 import multer from 'multer'
-import { error } from "console";
+import sharp from 'sharp';
 
 const SALT = envConf.SALT;
 const SECRET = envConf.JWT_SECRET;
@@ -155,10 +155,13 @@ authRouter.patch("/profile", async (req: Request, res: Response) => {
 authRouter.post("/update-avatar", upload.single('avatar'), async (req: Request, res: Response) => {
 
     const image = req.file;
+
     try {
         if (!image) throw new Error("No image provided")
-        console.log(image.mimetype)
         if (!ALLOWED_FILE_TYPES.includes(image.mimetype)) throw new Error("Invalid file type")
+        const processedImage = await sharp(image.buffer).resize(200).toBuffer();
+
+
     } catch (err) {
         if (err instanceof Error) {
             return failureResponse(res, 400, err.message)

@@ -10,6 +10,7 @@ import { error } from "console";
 
 const SALT = envConf.SALT;
 const SECRET = envConf.JWT_SECRET;
+const ALLOWED_FILE_TYPES = ["image/jpeg", "image/png"];
 
 const storage = multer.memoryStorage()
 const upload = multer({ storage: storage })
@@ -156,7 +157,8 @@ authRouter.post("/update-avatar", upload.single('avatar'), async (req: Request, 
     const image = req.file;
     try {
         if (!image) throw new Error("No image provided")
-
+        console.log(image.mimetype)
+        if (!ALLOWED_FILE_TYPES.includes(image.mimetype)) throw new Error("Invalid file type")
     } catch (err) {
         if (err instanceof Error) {
             return failureResponse(res, 400, err.message)

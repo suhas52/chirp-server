@@ -3,6 +3,7 @@ import { CustomError } from '../lib/customError.ts';
 import { successResponse } from '../lib/response.ts';
 import * as jwtService from '../services/jwtService.ts'
 import * as crudService from '../services/crudService.ts'
+import { nextTick } from 'node:process';
 
 export const postPostController = async (req: Request, res: Response, next: NextFunction) => {
     const formData = req.body;
@@ -14,10 +15,11 @@ export const postPostController = async (req: Request, res: Response, next: Next
     return successResponse(res, 201, newPost);
 }
 
-export const getAllPostsController = async (req: Request, res: Response) => {
-
-    const posts = await crudService.getAllPostsService();
-    return successResponse(res, 200, posts)
+export const getAllPostsController = async (req: Request, res: Response, next: NextFunction) => {
+    const take = Number(req.query.take) || 10;
+    const cursor = req.query.cursor ? Number(req.query.cursor) : undefined;
+    const postsData = await crudService.getAllPostsService(take, next, cursor);
+    return successResponse(res, 200, postsData)
 }
 
 
@@ -30,9 +32,11 @@ export const getPostByPostIdController = async (req: Request, res: Response, nex
 
 export const getPostsByUserIdController = async (req: Request, res: Response, next: NextFunction) => {
     const { userId } = req.params;
+    const take = Number(req.query.take) || 10;
+    const cursor = req.query.cursor ? Number(req.query.cursor) : undefined;
 
     if (!userId) return next(new CustomError("Invalid request", 400))
-    const posts = await crudService.getPostsByUserIdService(userId, next)
+    const posts = await crudService.getPostsByUserIdService(userId, next, take, cursor)
     return successResponse(res, 200, posts)
 }
 

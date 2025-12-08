@@ -38,6 +38,7 @@ model Post {
   likes     Like[]
   retweets  Retweet[]
   comments  Comment[]
+  cursorId  Int       @unique @default(autoincrement())
 }
 
 model Like {

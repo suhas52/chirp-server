@@ -1,9 +1,10 @@
-import { Router, type Request, type Response } from "express";
+import { Router, type NextFunction, type Request, type Response } from "express";
 import envConf from "../lib/envConfig.ts";
 import { registerSchema } from "../zodSchemas/authSchemas.ts";
 import { prisma } from '../lib/prismaConfig.ts';
 import bcrypt from 'bcryptjs';
 import { successResponse } from "../lib/response.ts";
+import { CustomError } from "../lib/customError.ts";
 
 
 const SALT = envConf.SALT;
@@ -39,12 +40,12 @@ seedRouter.post("/register/:userNumber", async (req: Request, res: Response) => 
     return successResponse(res, 200, { users })
 })
 
-// seedRouter.post("/post/:postNumber", async (req: Request, res: Response) => {
+// seedRouter.post("/post/:postNumber", async (req: Request, res: Response, next: NextFunction) => {
 //     const postNumber = Number(req.params['postNumber'])
 //     const userIds = await prisma.user.findMany({
-//         select: {id: true}
+//         select: { id: true }
 //     })
-//     if (!userIds) throw new Error()
+//     if (!userIds) return next(new CustomError("Unable to seed", 400))
 //     const posts = [];
 //     for (let i = 1; i <= postNumber; i++) {
 //         let randomArrayIndex = Math.floor(Math.random() * userIds.length);

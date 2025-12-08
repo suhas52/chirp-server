@@ -17,7 +17,7 @@ export const postPostController = async (req: Request, res: Response, next: Next
 
 export const getAllPostsController = async (req: Request, res: Response, next: NextFunction) => {
     const take = Number(req.query.take) || 10;
-    const cursor = req.query.cursor ? Number(req.query.cursor) : undefined;
+    const cursor = req.query.cursor ? String(req.query.cursor) : undefined;
     const postsData = await userService.getAllPostsService(take, cursor);
     return successResponse(res, 200, postsData)
 }
@@ -33,7 +33,7 @@ export const getPostByPostIdController = async (req: Request, res: Response, nex
 export const getPostsByUserIdController = async (req: Request, res: Response, next: NextFunction) => {
     const { userId } = req.params;
     const take = Number(req.query.take) || 10;
-    const cursor = req.query.cursor ? Number(req.query.cursor) : undefined;
+    const cursor = req.query.cursor ? String(req.query.cursor) : undefined;
 
     if (!userId) return next(new CustomError("Invalid request", 400))
     const posts = await userService.getPostsByUserIdService(userId, take, cursor)
@@ -55,7 +55,7 @@ export const postCommentByPostIdController = async (req: Request, res: Response,
 export const getCommentsByPostIdController = async (req: Request, res: Response, next: NextFunction) => {
     const { postId } = req.params;
     const take = Number(req.query.take) || 10;
-    const cursor = req.query.cursor ? Number(req.query.cursor) : undefined;
+    const cursor = req.query.cursor ? String(req.query.cursor) : undefined;
     if (!postId) return next(new CustomError("Invalid request", 400))
     const comments = userService.getCommentsByPostIdService(postId, take, cursor)
     return successResponse(res, 200, comments)

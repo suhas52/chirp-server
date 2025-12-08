@@ -3,6 +3,7 @@ import { profanity } from '@2toad/profanity';
 import { prisma } from "../lib/prismaConfig.ts";
 import { CustomError } from "../lib/customError.ts";
 import * as types from '../lib/types.ts'
+import { decodeCursor, encodeCursor } from "../lib/encodeCursor.ts";
 
 
 export const postPostService = async (id: string, formData: any) => {
@@ -23,14 +24,16 @@ export const postPostService = async (id: string, formData: any) => {
     return newPost;
 }
 
-export const getAllPostsService = async (take: number, cursor?: number) => {
+export const getAllPostsService = async (take: number, cursor?: string) => {
     let query: types.PostQuery = {
         take: take + 1,
         orderBy: { cursorId: 'asc' },
     }
 
+
     if (cursor) {
-        query.cursor = { cursorId: cursor }
+        const decodedCursor = decodeCursor(cursor)
+        query.cursor = { cursorId: decodedCursor }
     }
 
     const posts = await prisma.post.findMany(query)
@@ -39,7 +42,7 @@ export const getAllPostsService = async (take: number, cursor?: number) => {
 
     if (posts.length > take) {
         const nextItem = posts.pop();
-        nextCursor = nextItem?.cursorId;
+        nextCursor = nextItem && encodeCursor(nextItem.cursorId);
     }
 
     return { posts, nextCursor }
@@ -54,7 +57,7 @@ export const getPostByPostIdService = async (postId: string) => {
     return post
 }
 
-export const getPostsByUserIdService = async (userId: string, take: number, cursor?: number) => {
+export const getPostsByUserIdService = async (userId: string, take: number, cursor?: string) => {
     const query: types.PostQuery = {
         orderBy: { cursorId: 'asc' },
         take: take + 1,
@@ -62,7 +65,8 @@ export const getPostsByUserIdService = async (userId: string, take: number, curs
     }
 
     if (cursor) {
-        query.cursor = { cursorId: cursor }
+        const decodedCursor = decodeCursor(cursor)
+        query.cursor = { cursorId: decodedCursor }
     }
 
 

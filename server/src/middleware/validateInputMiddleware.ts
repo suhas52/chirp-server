@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from 'express'
-import { prettifyError, treeifyError, ZodError, type ZodType } from 'zod';
+import { ZodError, type ZodType } from 'zod';
 import { CustomError } from '../lib/customError.ts';
 
 
@@ -14,8 +14,6 @@ function formatZodErrors(error: ZodError) {
 
 
 export const validateInput = (schema: ZodType) => (req: Request, res: Response, next: NextFunction) => {
-
-
 
     const parsed = schema.safeParse(req.body);
     if (!parsed.success) {

@@ -10,13 +10,6 @@ type jwtUser = {
     username: string
 }
 
-interface DecodedUser {
-    id: string;
-    username: string;
-    iat: number;
-    exp: number;
-}
-
 export const signJwt = (user: jwtUser) => {
     const accessToken = jwt
         .sign({ id: user.id, username: user.username }, jwtSecret, {
@@ -24,13 +17,4 @@ export const signJwt = (user: jwtUser) => {
 
         })
     return accessToken;
-}
-
-export const validateJwt = (accessToken: string) => {
-    try {
-        const decodedUser = jwt.verify(accessToken, jwtSecret) as DecodedUser;
-        return decodedUser;
-    } catch (err) {
-        throw new CustomError("Failed to verify user, please login again", 401)
-    }
 }

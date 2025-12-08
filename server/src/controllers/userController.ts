@@ -1,14 +1,14 @@
 import type { Request, Response, NextFunction } from 'express'
 import { CustomError } from '../lib/customError.ts';
 import { successResponse } from '../lib/response.ts';
-import * as jwtService from '../services/jwtService.ts'
 import * as userService from '../services/userService.ts'
 
 
 export const postPostController = async (req: Request, res: Response, next: NextFunction) => {
     const formData = req.body;
     const accessToken = req.cookies.token;
-    const decodedUser = jwtService.validateJwt(accessToken);
+    const decodedUser = req.decodedUser;
+    console.log(decodedUser)
     if (!accessToken) throw next(new CustomError("User not logged in", 401))
     if (!formData) throw next(new CustomError("Invalid input", 400))
     const newPost = await userService.postPostService(decodedUser.id, formData)
@@ -43,11 +43,10 @@ export const getPostsByUserIdController = async (req: Request, res: Response, ne
 export const postCommentByPostIdController = async (req: Request, res: Response, next: NextFunction) => {
     const formData = req.body;
     const { postId } = req.params;
-    const accessToken = req.cookies.token;
+    const decodedUser = req.decodedUser;
     if (!postId) return next(new CustomError("Invalid Request", 400))
-    if (!accessToken) return next(new CustomError("You cannot comment without being logged in", 400));
     if (!formData) return next(new CustomError("Unable to post an empty form", 400))
-    const decodedUser = jwtService.validateJwt(accessToken);
+
     const newComment = await userService.postCommentByPostIdService(decodedUser.id, postId, formData)
     return successResponse(res, 201, newComment)
 }

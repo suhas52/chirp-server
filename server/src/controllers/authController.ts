@@ -30,29 +30,23 @@ export const logoutController = async (req: Request, res: Response, next: NextFu
 }
 
 export const meController = async (req: Request, res: Response, next: NextFunction) => {
-    if (!req.cookies.token) return next(new CustomError("User not logged in", 401))
-    const accessToken = req.cookies.token;
-    const decodedUser = jwtService.validateJwt(accessToken);
+    const decodedUser = req.decodedUser;
     const user = await authService.meService(decodedUser.id)
     return successResponse(res, 200, { ...user })
 }
 
 export const profileController = async (req: Request, res: Response, next: NextFunction) => {
     const formData = req.body;
-    if (!req.cookies.token) return next(new CustomError("User not logged in", 401))
-    const accessToken = req.cookies.token;
+    const decodedUser = req.decodedUser;
     if (!formData) return next(new CustomError("Invalid input", 400))
-    const decodedUser = jwtService.validateJwt(accessToken)
     const modifiedUser = await authService.updateProfileService(decodedUser.id, formData)
     return successResponse(res, 204, modifiedUser)
 }
 
 export const updateAvatarController = async (req: Request, res: Response, next: NextFunction) => {
+    const decodedUser = req.decodedUser;
     const image = req.file;
     if (!image) return next(new CustomError("Image not provided", 400))
-    if (!req.cookies.token) return next(new CustomError("User not logged in", 401))
-    const accessToken = req.cookies.token;
-    const decodedUser = jwtService.validateJwt(accessToken);
     const updatedAvatarFileName = await authService.updateAvatarService(image, decodedUser.id)
     return successResponse(res, 200, { updatedAvatarFileName })
 }

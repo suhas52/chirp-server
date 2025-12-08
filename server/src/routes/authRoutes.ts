@@ -3,6 +3,7 @@ import { loginController, logoutController, meController, profileController, reg
 import multer from "multer";
 import { registerSchema, loginSchema, profileSchema } from "../zodSchemas/authSchemas.ts";
 import { validateInput } from "../middleware/validateInputMiddleware.ts";
+import { validateJwt } from "../middleware/jwtMiddleware.ts";
 
 const storage = multer.memoryStorage()
 const upload = multer({ storage: storage })
@@ -12,6 +13,6 @@ export const authRouter = Router();
 authRouter.post("/register", validateInput(registerSchema), registerController)
 authRouter.post("/login", validateInput(loginSchema), loginController)
 authRouter.post("/logout", logoutController)
-authRouter.get("/me", meController)
-authRouter.patch("/update-profile", validateInput(profileSchema), profileController)
-authRouter.patch("/update-avatar", upload.single('avatar'), updateAvatarController)
+authRouter.get("/me", validateJwt(), meController)
+authRouter.patch("/update-profile", validateInput(profileSchema), validateJwt(), profileController)
+authRouter.patch("/update-avatar", upload.single('avatar'), validateJwt(), updateAvatarController)

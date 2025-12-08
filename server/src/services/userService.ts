@@ -2,21 +2,11 @@ import type { NextFunction } from "express"
 import { profanity } from '@2toad/profanity';
 import { prisma } from "../lib/prismaConfig.ts";
 import { CustomError } from "../lib/customError.ts";
+import * as types from '../lib/types.ts'
 
-interface PostQuery {
-    take: number,
-    orderBy: { cursorId: 'asc' },
-    skip?: number,
-    cursor?: { cursorId: number },
-    where?: { userId: string }
-}
 
-interface CommentQuery {
-
-}
-
-export const postPostService = async (id: string, formData: any, next: NextFunction) => {
-    if (profanity.exists(formData.content)) throw next(new CustomError("Profanity is not allowed", 400))
+export const postPostService = async (id: string, formData: any) => {
+    if (profanity.exists(formData.content)) throw new CustomError("Profanity is not allowed", 400)
 
     const newPost = await prisma.post.create({
         data: {
@@ -33,8 +23,8 @@ export const postPostService = async (id: string, formData: any, next: NextFunct
     return newPost;
 }
 
-export const getAllPostsService = async (take: number, next: NextFunction, cursor?: number) => {
-    let query: PostQuery = {
+export const getAllPostsService = async (take: number, cursor?: number) => {
+    let query: types.PostQuery = {
         take: take + 1,
         orderBy: { cursorId: 'asc' },
     }
@@ -55,7 +45,7 @@ export const getAllPostsService = async (take: number, next: NextFunction, curso
     return { posts, nextCursor }
 }
 
-export const getPostByPostIdService = async (postId: string, next: NextFunction) => {
+export const getPostByPostIdService = async (postId: string) => {
     const post = await prisma.post.findUnique({
         where: {
             id: postId
@@ -64,8 +54,8 @@ export const getPostByPostIdService = async (postId: string, next: NextFunction)
     return post
 }
 
-export const getPostsByUserIdService = async (userId: string, next: NextFunction, take: number, cursor?: number) => {
-    const query: PostQuery = {
+export const getPostsByUserIdService = async (userId: string, take: number, cursor?: number) => {
+    const query: types.PostQuery = {
         orderBy: { cursorId: 'asc' },
         take: take + 1,
         where: { userId: userId }
@@ -77,6 +67,7 @@ export const getPostsByUserIdService = async (userId: string, next: NextFunction
 
 
     const posts = await prisma.post.findMany(query)
+    if (posts.length === 0) throw new CustomError("This user either does not exist or does not have any posts", 400)
     let nextCursor = null;
     if (posts.length > take) {
         const nextItem = posts.pop();
@@ -86,8 +77,8 @@ export const getPostsByUserIdService = async (userId: string, next: NextFunction
     return { posts, nextCursor }
 }
 
-export const postCommentByPostIdService = async (userId: string, postId: string, formData: any, next: NextFunction) => {
-    if (profanity.exists(formData.content)) return next(new CustomError("Profanity is not allowed", 400))
+export const postCommentByPostIdService = async (userId: string, postId: string, formData: any) => {
+    if (profanity.exists(formData.content)) throw new CustomError("Profanity is not allowed", 400)
     const newComment = await prisma.comment.create({
         data: {
             userId: userId,
@@ -98,15 +89,23 @@ export const postCommentByPostIdService = async (userId: string, postId: string,
     return newComment;
 }
 
-export const getCommentsByPostIdService = async (postId: string, next: NextFunction, take: number, cursor?: number) => {
-    let query:  = {
-
+export const getCommentsByPostIdService = async (postId: string, take: number, cursor?: number) => {
+    let query: types.CommentQuery = {
+        orderBy: { cursorId: 'asc' },
+        take: take + 1,
+        where: { postId: postId }
     }
-    const comments = await prisma.comment.findMany({
-        where: {
-            postId: postId
-        },
-    })
 
-    return comments
+    if (cursor) {
+        query.cursor = { cursorId: cursor }
+    }
+
+    const comments = await prisma.comment.findMany(query)
+    let nextCursor = null;
+    if (comments.length > take) {
+        const nextItem = comments.pop();
+        nextCursor = nextItem?.id;
+    }
+
+    return { comments, nextCursor }
 }

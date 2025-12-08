@@ -73,4 +73,5 @@ model Comment {
   content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  cursorId  Int      @unique @default(autoincrement())
 }

@@ -13,7 +13,7 @@ export const registerController = async (req: Request, res: Response, next: Next
 
 export const loginController = async (req: Request, res: Response, next: NextFunction) => {
     const formData = req.body;
-    const user = await authService.login(formData, next)
+    const user = await authService.login(formData)
     const accessToken = jwtService.signJwt({ username: user.username, id: user.id })
     res.status(200).cookie("token", accessToken, {
         httpOnly: true,
@@ -32,8 +32,8 @@ export const logoutController = async (req: Request, res: Response, next: NextFu
 export const meController = async (req: Request, res: Response, next: NextFunction) => {
     if (!req.cookies.token) return next(new CustomError("User not logged in", 401))
     const accessToken = req.cookies.token;
-    const decodedUser = jwtService.validateJwt(accessToken, next);
-    const user = await authService.meService(decodedUser.id, next)
+    const decodedUser = jwtService.validateJwt(accessToken);
+    const user = await authService.meService(decodedUser.id)
     return successResponse(res, 200, { ...user })
 }
 
@@ -42,8 +42,8 @@ export const profileController = async (req: Request, res: Response, next: NextF
     if (!req.cookies.token) return next(new CustomError("User not logged in", 401))
     const accessToken = req.cookies.token;
     if (!formData) return next(new CustomError("Invalid input", 400))
-    const decodedUser = jwtService.validateJwt(accessToken, next)
-    const modifiedUser = await authService.updateProfileService(decodedUser.id, formData, next)
+    const decodedUser = jwtService.validateJwt(accessToken)
+    const modifiedUser = await authService.updateProfileService(decodedUser.id, formData)
     return successResponse(res, 204, modifiedUser)
 }
 
@@ -52,7 +52,7 @@ export const updateAvatarController = async (req: Request, res: Response, next: 
     if (!image) return next(new CustomError("Image not provided", 400))
     if (!req.cookies.token) return next(new CustomError("User not logged in", 401))
     const accessToken = req.cookies.token;
-    const decodedUser = jwtService.validateJwt(accessToken, next);
-    const updatedAvatarFileName = await authService.updateAvatarService(image, decodedUser.id, next)
+    const decodedUser = jwtService.validateJwt(accessToken);
+    const updatedAvatarFileName = await authService.updateAvatarService(image, decodedUser.id)
     return successResponse(res, 200, { updatedAvatarFileName })
 }

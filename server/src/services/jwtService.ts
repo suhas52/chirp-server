@@ -26,11 +26,11 @@ export const signJwt = (user: jwtUser) => {
     return accessToken;
 }
 
-export const validateJwt = (accessToken: string, next: NextFunction) => {
+export const validateJwt = (accessToken: string) => {
     try {
         const decodedUser = jwt.verify(accessToken, jwtSecret) as DecodedUser;
         return decodedUser;
     } catch (err) {
-        throw next(new CustomError("Failed to verify user, please login again", 401))
+        throw new CustomError("Failed to verify user, please login again", 401)
     }
 }

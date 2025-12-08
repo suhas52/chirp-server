@@ -2,7 +2,7 @@
 import express from 'express'
 import cors from 'cors'
 import { authRouter } from './routes/authRoutes.ts';
-import { userRouter } from './routes/crudRoutes.ts';
+import { userRouter } from './routes/userRoutes.ts';
 import cookieParser from 'cookie-parser'
 import envConf from './lib/envConfig.ts'
 import { seedRouter } from './routes/seedRoutes.ts';

@@ -19,8 +19,8 @@ export const validateInput = (schema: ZodType) => (req: Request, res: Response, 
     if (!parsed.success) {
         const error: ZodError = parsed.error;
         const errorData = formatZodErrors(error);
-        const errorMessage = error.issues[0] ? error.issues[0].message : "Unknown error"
-        throw new CustomError(errorMessage, 400)
+        const errorMessage = error.issues[0] ? error.issues[0].message : "Unknown error";
+        throw new CustomError(errorMessage, 400, errorData)
     }
     next();
 }

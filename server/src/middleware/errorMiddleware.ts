@@ -2,11 +2,10 @@ import type { NextFunction, Request, Response } from "express";
 import { Prisma } from "../generated/prisma/client.ts";
 
 
-
-
 interface CustomError extends Error {
     statusCode?: number;
     status?: string;
+    data?: any;
 }
 
 export const globalErrorHandler = (
@@ -17,7 +16,7 @@ export const globalErrorHandler = (
 ) => {
     let statusCode = error.statusCode ?? 500;
     let message = error.status ?? "Internal server error";
-
+    let data = error.data ?? undefined;
 
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
         const target = error.meta?.modelName
@@ -49,10 +48,14 @@ export const globalErrorHandler = (
         message = "Invalid database query";
     }
 
+    if (statusCode === 500) {
+        console.error(error);
+    }
 
     res.status(statusCode).json({
         success: false,
         status: statusCode,
         message: message,
+        ...(data !== undefined && { data })
     });
 };

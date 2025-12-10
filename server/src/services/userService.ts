@@ -66,6 +66,7 @@ export const getPostByPostId = async (postId: string) => {
             }
         },
     })
+
     return post
 }
 

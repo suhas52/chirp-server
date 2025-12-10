@@ -48,7 +48,7 @@ export const login = async (data: types.loginData) => {
     return user;
 }
 
-export const meService = async (id: string) => {
+export const me = async (id: string) => {
     const user = await prisma.user.findUnique({
         where: { id },
         select: {
@@ -64,7 +64,7 @@ export const meService = async (id: string) => {
     return { ...user, avatarUrl };
 }
 
-export const updateProfileService = async (id: string, formData: types.profileFormData) => {
+export const updateProfile = async (id: string, formData: types.profileFormData) => {
     if (!Object.keys(formData).length) {
         throw new CustomError("Invalid input", 400)
     }
@@ -77,7 +77,7 @@ export const updateProfileService = async (id: string, formData: types.profileFo
     return modifiedUser;
 }
 
-export const updateAvatarService = async (image: Express.Multer.File, id: string) => {
+export const updateAvatar = async (image: Express.Multer.File, id: string) => {
     if (!allowedFileTypes.includes(image.mimetype)) throw new CustomError("Invalid file type", 400)
     const processedImageBuffer = await sharp(image.buffer).resize(200).png().toBuffer();
     const avatarFileName = await uploadToCloud(processedImageBuffer);

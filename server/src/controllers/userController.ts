@@ -4,16 +4,15 @@ import { successResponse } from '../lib/response.ts';
 import * as userService from '../services/userService.ts'
 
 
-export const postPostController = async (req: Request, res: Response, next: NextFunction) => {
+export const postPost = async (req: Request, res: Response, next: NextFunction) => {
     const formData = req.body;
-    const accessToken = req.cookies.token;
     const decodedUser = req.decodedUser;
     if (!formData) throw next(new CustomError("Invalid input", 400))
     const newPost = await userService.postPostService(decodedUser.id, formData)
     return successResponse(res, 201, newPost);
 }
 
-export const getAllPostsController = async (req: Request, res: Response, next: NextFunction) => {
+export const getAllPosts = async (req: Request, res: Response, next: NextFunction) => {
     const take = Number(req.query.take) || 10;
     const cursor = req.query.cursor ? String(req.query.cursor) : undefined;
     const postsData = await userService.getAllPostsService(take, cursor);
@@ -21,14 +20,14 @@ export const getAllPostsController = async (req: Request, res: Response, next: N
 }
 
 
-export const getPostByPostIdController = async (req: Request, res: Response, next: NextFunction) => {
+export const getPostByPostId = async (req: Request, res: Response, next: NextFunction) => {
     const { postId } = req.params;
     if (!postId) return next(new CustomError("Invalid input", 400))
     const post = await userService.getPostByPostIdService(postId)
     return successResponse(res, 200, post)
 }
 
-export const getPostsByUserIdController = async (req: Request, res: Response, next: NextFunction) => {
+export const getPostsByUserId = async (req: Request, res: Response, next: NextFunction) => {
     const { userId } = req.params;
     const take = Number(req.query.take) || 10;
     const cursor = req.query.cursor ? String(req.query.cursor) : undefined;
@@ -38,7 +37,7 @@ export const getPostsByUserIdController = async (req: Request, res: Response, ne
     return successResponse(res, 200, posts)
 }
 
-export const postCommentByPostIdController = async (req: Request, res: Response, next: NextFunction) => {
+export const postCommentByPostId = async (req: Request, res: Response, next: NextFunction) => {
     const formData = req.body;
     const { postId } = req.params;
     const decodedUser = req.decodedUser;
@@ -49,7 +48,7 @@ export const postCommentByPostIdController = async (req: Request, res: Response,
     return successResponse(res, 201, newComment)
 }
 
-export const getCommentsByPostIdController = async (req: Request, res: Response, next: NextFunction) => {
+export const getCommentsByPostId = async (req: Request, res: Response, next: NextFunction) => {
     const { postId } = req.params;
     const take = Number(req.query.take) || 10;
     const cursor = req.query.cursor ? String(req.query.cursor) : undefined;

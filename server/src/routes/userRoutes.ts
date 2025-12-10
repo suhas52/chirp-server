@@ -13,4 +13,7 @@ userRouter.get("/post/:postId", controller.getPostByPostId)
 userRouter.get("/posts/:userId", controller.getPostsByUserId)
 userRouter.post("/comment/:postId", validateJwt(), controller.postCommentByPostId)
 userRouter.get("/comments/:postId", controller.getCommentsByPostId)
-
+userRouter.post("/post/like/:postId", validateJwt(), controller.likePost)
+userRouter.delete("/post/like/:likeId", validateJwt(), controller.unlikePost)
+userRouter.post("/post/retweet/:postId", validateJwt(), controller.retweetPost)
+userRouter.delete("/post/retweet/:retweetId", validateJwt(), controller.unRetweetPost)

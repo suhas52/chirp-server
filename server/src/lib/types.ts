@@ -1,6 +1,7 @@
 
 import * as zod from "zod"
 import type { loginSchema, profileSchema, registerSchema } from "../zodSchemas/authSchemas.ts"
+import type { BoolEnum } from "sharp"
 
 export type registerData = zod.infer<typeof registerSchema>
 
@@ -13,7 +14,11 @@ export interface PostQuery {
     orderBy: { cursorId: 'asc' },
     skip?: number,
     cursor?: { cursorId: number },
-    where?: { userId: string }
+    where?: { userId: string },
+    select?: {
+        id: boolean, content?: boolean, updatedAt?: boolean, userId?: boolean,
+        _count: { select: { likes?: boolean, retweets?: boolean } }
+    }
 }
 
 export interface CommentQuery {

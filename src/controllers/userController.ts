@@ -15,7 +15,8 @@ export const postPost = async (req: Request, res: Response, next: NextFunction) 
 export const getAllPosts = async (req: Request, res: Response, next: NextFunction) => {
     const take = Number(req.query.take) || 10;
     const cursor = req.query.cursor ? String(req.query.cursor) : undefined;
-    const postsData = await userService.getAllPosts(take, cursor);
+    const userId = req.query.userId ? String(req.query.userId) : undefined;
+    const postsData = await userService.getAllPosts(take, cursor, userId);
     return successResponse(res, 200, postsData)
 }
 

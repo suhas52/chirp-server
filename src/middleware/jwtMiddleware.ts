@@ -17,7 +17,9 @@ export const validateJwt = () => (req: Request, res: Response, next: NextFunctio
         req.decodedUser = decodedUser
         return next();
     } catch {
+
         return next(new CustomError("Failed to verify user, please login again", 401))
+
     }
 
 }

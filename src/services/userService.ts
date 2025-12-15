@@ -7,6 +7,7 @@ import type z from 'zod';
 import type { postSchema } from '../zodSchemas/userSchemas.ts';
 import type { Prisma } from '../generated/prisma/client.ts';
 import { getSignedImageUrl } from '../lib/s3Config.ts';
+import { validateJwt } from '../middleware/jwtMiddleware.ts';
 type PostWithUser = {
     id: number;
     content: string;
@@ -37,7 +38,8 @@ export const postPost = async (id: string, formData: z.infer<typeof postSchema>)
     return newPost;
 }
 
-export const getAllPosts = async (take: number, cursor?: string) => {
+export const getAllPosts = async (take: number, cursor?: string, userId?: string) => {
+
     let query = {
         take: take + 1,
         orderBy: { cursorId: 'asc' },
@@ -47,8 +49,18 @@ export const getAllPosts = async (take: number, cursor?: string) => {
         select: {
             id: true, content: true, updatedAt: true, userId: true, cursorId: true,
             _count: {
-                select: { likes: true, retweets: true }
+                select: { likes: true, retweets: true, }
             },
+            ...(userId && {
+                likes: {
+                    where: { userId },
+                    select: { id: true }
+                },
+                retweets: {
+                    where: { userId },
+                    select: { id: true }
+                }
+            }),
             user: {
                 select: {
                     avatarFileName: true,
@@ -67,7 +79,7 @@ export const getAllPosts = async (take: number, cursor?: string) => {
         nextCursor = nextItem && nextItem.cursorId;
     }
 
-    const completedPosts = await Promise.all(
+    const postsWithSignedUrl = await Promise.all(
         posts.map(async (post) => {
             const avatarUrl = await getSignedImageUrl(post.user.avatarFileName)
             return { ...post, avatarUrl }
@@ -75,7 +87,7 @@ export const getAllPosts = async (take: number, cursor?: string) => {
     )
 
 
-    return { posts: completedPosts, nextCursor }
+    return { posts: postsWithSignedUrl, nextCursor }
 
 
 }

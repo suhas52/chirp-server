@@ -7,12 +7,15 @@ import cookieParser from 'cookie-parser'
 import envConf from './lib/envConfig.ts'
 import { seedRouter } from './routes/seedRoutes.ts';
 import { globalErrorHandler } from './middleware/errorMiddleware.ts';
+import { METHODS } from 'node:http';
 
 
 const port = envConf.SERVER_PORT;
 const clientUrl = envConf.CLIENT_URL;
 const corsOptions = {
     origin: clientUrl,
+    methods: ['GET', 'PUT', 'POST', 'PATCH', 'DELETE'],
+    credentials: true
 }
 
 const app = express();

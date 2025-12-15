@@ -5,6 +5,19 @@ import * as types from '../lib/types.ts'
 import { decodeCursor, encodeCursor } from "../lib/encodeCursor.ts";
 import type z from 'zod';
 import type { postSchema } from '../zodSchemas/userSchemas.ts';
+import type { Prisma } from '../generated/prisma/client.ts';
+import { getSignedImageUrl } from '../lib/s3Config.ts';
+type PostWithUser = {
+    id: number;
+    content: string;
+    updatedAt: Date;
+    userId: number;
+    _count: { likes: number; retweets: number };
+    user: {
+        avatarFileName: string;
+        username: string;
+    };
+};
 
 
 export const postPost = async (id: string, formData: z.infer<typeof postSchema>) => {
@@ -25,31 +38,44 @@ export const postPost = async (id: string, formData: z.infer<typeof postSchema>)
 }
 
 export const getAllPosts = async (take: number, cursor?: string) => {
-    let query: types.PostQuery = {
+    let query = {
         take: take + 1,
         orderBy: { cursorId: 'asc' },
+        ...(cursor && {
+            cursor: { cursorId: decodeCursor(cursor) }
+        }),
         select: {
-            id: true, content: true, updatedAt: true, userId: true,
+            id: true, content: true, updatedAt: true, userId: true, cursorId: true,
             _count: {
                 select: { likes: true, retweets: true }
+            },
+            user: {
+                select: {
+                    avatarFileName: true,
+                    username: true,
+                }
             }
         },
-    }
+    } satisfies Prisma.PostFindManyArgs
 
 
-    if (cursor) {
-        const decodedCursor = decodeCursor(cursor)
-        query.cursor = { cursorId: decodedCursor }
-    }
 
     const posts = await prisma.post.findMany(query)
     let nextCursor = null;
     if (posts.length > take) {
         const nextItem = posts.pop();
-        nextCursor = nextItem && encodeCursor(nextItem.cursorId);
+        nextCursor = nextItem && nextItem.cursorId;
     }
 
-    return { posts, nextCursor }
+    const completedPosts = await Promise.all(
+        posts.map(async (post) => {
+            const avatarUrl = await getSignedImageUrl(post.user.avatarFileName)
+            return { ...post, avatarUrl }
+        })
+    )
+
+
+    return { posts: completedPosts, nextCursor }
 
 
 }

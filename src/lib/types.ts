@@ -17,7 +17,13 @@ export interface PostQuery {
     where?: { userId: string },
     select?: {
         id: boolean, content?: boolean, updatedAt?: boolean, userId?: boolean,
-        _count: { select: { likes?: boolean, retweets?: boolean } }
+        _count: { select: { likes?: boolean, retweets?: boolean } },
+        user?: {
+            select: {
+                avatarFileName?: boolean,
+                username?: boolean
+            }
+        }
     }
 }
 

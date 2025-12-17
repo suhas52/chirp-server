@@ -40,7 +40,10 @@ export const postPost = async (id: string, formData: z.infer<typeof postSchema>)
 
 export const getAllPosts = async (take: number, cursor?: string, userId?: string) => {
 
-    let query = {
+
+
+
+    const posts = await prisma.post.findMany({
         take: take + 1,
         orderBy: { cursorId: 'asc' },
         ...(cursor && {
@@ -68,11 +71,9 @@ export const getAllPosts = async (take: number, cursor?: string, userId?: string
                 }
             }
         },
-    } satisfies Prisma.PostFindManyArgs
+    })
 
 
-
-    const posts = await prisma.post.findMany(query)
     let nextCursor = null;
     if (posts.length > take) {
         const nextItem = posts.pop();
@@ -86,21 +87,37 @@ export const getAllPosts = async (take: number, cursor?: string, userId?: string
         })
     )
 
-
+    console.log(postsWithSignedUrl)
     return { posts: postsWithSignedUrl, nextCursor }
 
 
 }
 
-export const getPostByPostId = async (postId: string) => {
+export const getPostByPostId = async (postId: string, userId?: string) => {
     const post = await prisma.post.findUnique({
         where: {
             id: postId
         },
         select: {
-            id: true, content: true, updatedAt: true, userId: true,
+            id: true, content: true, updatedAt: true, userId: true, cursorId: true,
             _count: {
-                select: { likes: true, retweets: true }
+                select: { likes: true, retweets: true, }
+            },
+            ...(userId && {
+                likes: {
+                    where: { userId },
+                    select: { id: true }
+                },
+                retweets: {
+                    where: { userId },
+                    select: { id: true }
+                }
+            }),
+            user: {
+                select: {
+                    avatarFileName: true,
+                    username: true,
+                }
             }
         },
     })
@@ -109,20 +126,16 @@ export const getPostByPostId = async (postId: string) => {
 }
 
 export const getPostsByUserId = async (userId: string, take: number, cursor?: string) => {
-    const query: types.PostQuery = {
+
+    const posts = await prisma.post.findMany({
         orderBy: { cursorId: 'asc' },
         take: take + 1,
         where: { userId: userId },
+        ...(cursor && {
+            cursor: { cursorId: decodeCursor(cursor) }
+        })
 
-    }
-
-    if (cursor) {
-        const decodedCursor = decodeCursor(cursor)
-        query.cursor = { cursorId: decodedCursor }
-    }
-
-
-    const posts = await prisma.post.findMany(query)
+    })
     if (posts.length === 0) throw new CustomError("This user either does not exist or does not have any posts", 400)
     let nextCursor = null;
     if (posts.length > take) {
@@ -147,18 +160,14 @@ export const postCommentByPostId = async (userId: string, postId: string, formDa
 }
 
 export const getCommentsByPostId = async (postId: string, take: number, cursor?: string) => {
-    let query: types.CommentQuery = {
+    const comments = await prisma.comment.findMany({
         orderBy: { cursorId: 'asc' },
         take: take + 1,
-        where: { postId: postId }
-    }
-
-    if (cursor) {
-        const decodedCursor = decodeCursor(cursor)
-        query.cursor = { cursorId: decodedCursor }
-    }
-
-    const comments = await prisma.comment.findMany(query)
+        where: { postId: postId },
+        ...(cursor && {
+            cursor: { cursorId: decodeCursor(cursor) }
+        })
+    })
     let nextCursor = null;
     if (comments.length > take) {
         const nextItem = comments.pop();

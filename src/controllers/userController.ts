@@ -24,7 +24,8 @@ export const getAllPosts = async (req: Request, res: Response, next: NextFunctio
 export const getPostByPostId = async (req: Request, res: Response, next: NextFunction) => {
     const { postId } = req.params;
     if (!postId) return next(new CustomError("Invalid input", 400))
-    const post = await userService.getPostByPostId(postId)
+    const userId = req.query.userId ? String(req.query.userId) : undefined;
+    const post = await userService.getPostByPostId(postId, userId)
     return successResponse(res, 200, post)
 }
 

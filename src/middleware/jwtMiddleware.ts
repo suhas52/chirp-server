@@ -9,8 +9,8 @@ const jwtSecret = envConf.JWT_SECRET;
 
 
 export const validateJwt = () => (req: Request, res: Response, next: NextFunction) => {
-
     const accessToken = req.cookies.token;
+
     if (!req.cookies.token) return next(new CustomError("User not logged in", 401))
     try {
         const decodedUser = jwt.verify(accessToken, jwtSecret) as DecodedUser;

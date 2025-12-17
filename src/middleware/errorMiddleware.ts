@@ -51,7 +51,7 @@ export const globalErrorHandler = (
     if (statusCode === 500) {
         console.error(error);
     }
-
+    console.log(error)
     res.status(statusCode).json({
         success: false,
         status: statusCode,

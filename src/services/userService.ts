@@ -28,19 +28,21 @@ export const postPost = async (id: string, formData: z.infer<typeof postSchema>)
 
 export const getAllPosts = async (take: number, cursor?: string, userId?: string) => {
 
-
-
-
     const posts = await prisma.post.findMany({
         take: take + 1,
-        orderBy: { cursorId: 'asc' },
+        orderBy: { cursorId: 'desc' },
         ...(cursor && {
-            cursor: { cursorId: decodeCursor(cursor) }
+            cursor: { cursorId: decodeCursor(cursor) },
+            skip: 1,
         }),
         select: {
-            id: true, content: true, updatedAt: true, userId: true, cursorId: true,
+            id: true,
+            content: true,
+            updatedAt: true,
+            userId: true,
+            cursorId: true,
             _count: {
-                select: { likes: true, retweets: true, }
+                select: { likes: true, retweets: true }
             },
             ...(userId && {
                 likes: {
@@ -55,12 +57,12 @@ export const getAllPosts = async (take: number, cursor?: string, userId?: string
             user: {
                 select: {
                     avatarFileName: true,
-                    username: true,
+                    username: true
                 }
             }
-        },
-    })
-
+        }
+    });
+    console.log(posts)
 
     let nextCursor = null;
     if (posts.length > take) {
@@ -75,7 +77,6 @@ export const getAllPosts = async (take: number, cursor?: string, userId?: string
         })
     )
 
-    console.log(postsWithSignedUrl)
     return { posts: postsWithSignedUrl, nextCursor }
 
 
@@ -109,8 +110,10 @@ export const getPostByPostId = async (postId: string, userId?: string) => {
             }
         },
     })
-
-    return post
+    if (!post) throw new CustomError("Post does not exist", 400)
+    const avatarUrl = await getSignedImageUrl(post.user.avatarFileName)
+    console.log(avatarUrl)
+    return { ...post, avatarUrl }
 }
 
 export const getPostsByUserId = async (userId: string, take: number, cursor?: string) => {

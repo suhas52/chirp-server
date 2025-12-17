@@ -1,24 +1,12 @@
 import { profanity } from '@2toad/profanity';
 import { prisma } from "../lib/prismaConfig.ts";
 import { CustomError } from "../lib/customError.ts";
-import * as types from '../lib/types.ts'
-import { decodeCursor, encodeCursor } from "../lib/encodeCursor.ts";
+import { decodeCursor } from "../lib/encodeCursor.ts";
 import type z from 'zod';
 import type { postSchema } from '../zodSchemas/userSchemas.ts';
-import type { Prisma } from '../generated/prisma/client.ts';
+
 import { getSignedImageUrl } from '../lib/s3Config.ts';
-import { validateJwt } from '../middleware/jwtMiddleware.ts';
-type PostWithUser = {
-    id: number;
-    content: string;
-    updatedAt: Date;
-    userId: number;
-    _count: { likes: number; retweets: number };
-    user: {
-        avatarFileName: string;
-        username: string;
-    };
-};
+
 
 
 export const postPost = async (id: string, formData: z.infer<typeof postSchema>) => {

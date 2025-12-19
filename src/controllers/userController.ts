@@ -52,6 +52,7 @@ export const postCommentByPostId = async (req: Request, res: Response, next: Nex
 
 export const getCommentsByPostId = async (req: Request, res: Response, next: NextFunction) => {
     const { postId } = req.params;
+
     const take = Number(req.query.take) || 10;
     const cursor = req.query.cursor ? String(req.query.cursor) : undefined;
     if (!postId) return next(new CustomError("Invalid request", 400))

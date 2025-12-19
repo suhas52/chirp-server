@@ -57,12 +57,13 @@ export const getAllPosts = async (take: number, cursor?: string, userId?: string
             user: {
                 select: {
                     avatarFileName: true,
-                    username: true
+                    username: true,
+                    id: true
                 }
             }
         }
     });
-    console.log(posts)
+
 
     let nextCursor = null;
     if (posts.length > take) {
@@ -112,7 +113,7 @@ export const getPostByPostId = async (postId: string, userId?: string) => {
     })
     if (!post) throw new CustomError("Post does not exist", 400)
     const avatarUrl = await getSignedImageUrl(post.user.avatarFileName)
-    console.log(avatarUrl)
+
     return { ...post, avatarUrl }
 }
 
@@ -151,13 +152,26 @@ export const postCommentByPostId = async (userId: string, postId: string, formDa
 }
 
 export const getCommentsByPostId = async (postId: string, take: number, cursor?: string) => {
+
     const comments = await prisma.comment.findMany({
-        orderBy: { cursorId: 'asc' },
+        orderBy: { cursorId: 'desc' },
         take: take + 1,
+
         where: { postId: postId },
         ...(cursor && {
+            skip: 1,
             cursor: { cursorId: decodeCursor(cursor) }
-        })
+        }),
+        select: {
+            content: true, createdAt: true, cursorId: true, id: true,
+            user: {
+                select: {
+                    avatarFileName: true,
+                    username: true,
+                    id: true
+                }
+            }
+        }
     })
     let nextCursor = null;
     if (comments.length > take) {
@@ -165,7 +179,15 @@ export const getCommentsByPostId = async (postId: string, take: number, cursor?:
         nextCursor = nextItem?.cursorId;
     }
 
-    return { comments, nextCursor }
+
+    const comemntsWithSignedUrl = await Promise.all(
+        comments.map(async (comment) => {
+            const avatarUrl = await getSignedImageUrl(comment.user.avatarFileName)
+            return { ...comment, avatarUrl }
+        })
+    )
+
+    return { comments: comemntsWithSignedUrl, nextCursor }
 }
 
 export const likePost = async (userId: string, postId: string) => {

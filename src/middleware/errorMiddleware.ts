@@ -2,10 +2,10 @@ import type { NextFunction, Request, Response } from "express";
 import { Prisma } from "../generated/prisma/client.ts";
 
 
-interface CustomError extends Error {
+interface CustomError<TData = unknown> extends Error {
     statusCode?: number;
     status?: string;
-    data?: any;
+    data?: TData;
 }
 
 export const globalErrorHandler = (

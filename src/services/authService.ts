@@ -10,7 +10,7 @@ const salt = envConf.SALT
 
 
 
-const allowedFileTypes = ["image/jpeg", "image/png"];
+const allowedFileTypes = ["image/jpeg", "image/png", "image/webp"];
 
 export const register = async (data: types.registerData) => {
     const passwordHash = await bcrypt.hash(data.password, salt)

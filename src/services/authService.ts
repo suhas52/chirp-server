@@ -19,7 +19,7 @@ export const register = async (data: types.registerData) => {
             firstName: data.firstName,
             lastName: data.lastName,
             username: data.username,
-            passwordHash: passwordHash
+            passwordHash: passwordHash,
         },
         select: {
             id: true,
@@ -48,7 +48,7 @@ export const login = async (data: types.loginData) => {
     return user;
 }
 
-export const me = async (id: string) => {
+export const getUser = async (id: string) => {
     const user = await prisma.user.findUnique({
         where: { id },
         select: {
@@ -56,7 +56,8 @@ export const me = async (id: string) => {
             firstName: true,
             lastName: true,
             username: true,
-            avatarFileName: true
+            avatarFileName: true,
+            bio: true
         }
     })
     if (!user) throw new CustomError("User does not exist", 401)

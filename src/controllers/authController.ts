@@ -36,7 +36,15 @@ export const logout = async (req: Request, res: Response, next: NextFunction) =>
 
 export const me = async (req: Request, res: Response, next: NextFunction) => {
     const { decodedUser } = req
-    const user = await authService.me(decodedUser.id)
+    const user = await authService.getUser(decodedUser.id)
+    return successResponse(res, 200, { ...user })
+}
+
+export const getUser = async (req: Request, res: Response, next: NextFunction) => {
+
+    const { userId } = req.params
+    if (!userId) return next(new CustomError("UserId is required", 400))
+    const user = await authService.getUser(userId)
     return successResponse(res, 200, { ...user })
 }
 

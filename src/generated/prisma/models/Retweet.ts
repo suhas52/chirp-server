@@ -409,10 +409,6 @@ export type RetweetUncheckedUpdateManyWithoutPostNestedInput = {
   deleteMany?: Prisma.RetweetScalarWhereInput | Prisma.RetweetScalarWhereInput[]
 }
 
-export type NullableStringFieldUpdateOperationsInput = {
-  set?: string | null
-}
-
 export type RetweetCreateWithoutUserInput = {
   id?: string
   createdAt?: Date | string

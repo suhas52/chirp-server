@@ -52,6 +52,7 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   User: 'User',
+  Follow: 'Follow',
   Post: 'Post',
   Like: 'Like',
   Retweet: 'Retweet',
@@ -82,10 +83,21 @@ export const UserScalarFieldEnum = {
   lastName: 'lastName',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  passwordHash: 'passwordHash'
+  passwordHash: 'passwordHash',
+  bio: 'bio'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const FollowScalarFieldEnum = {
+  id: 'id',
+  followerId: 'followerId',
+  followingId: 'followingId',
+  createdAt: 'createdAt'
+} as const
+
+export type FollowScalarFieldEnum = (typeof FollowScalarFieldEnum)[keyof typeof FollowScalarFieldEnum]
 
 
 export const PostScalarFieldEnum = {

@@ -7,7 +7,7 @@ import * as userService from '../services/userService.ts'
 export const postPost = async (req: Request, res: Response, next: NextFunction) => {
     const formData = req.body;
     const decodedUser = req.decodedUser;
-    if (!formData) throw next(new CustomError("Invalid input", 400))
+    if (!formData) return next(new CustomError("Invalid input", 400))
     const newPost = await userService.postPost(decodedUser.id, formData)
     return successResponse(res, 201, newPost);
 }

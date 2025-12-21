@@ -8,7 +8,7 @@ import { CustomError } from "../lib/customError.ts";
 
 
 const SALT = envConf.SALT;
-const SECRET = envConf.JWT_SECRET;
+
 
 function generateFastRandomString(length: number) {
     return Math.random().toString(36).substring(2, length + 2);
@@ -29,7 +29,8 @@ seedRouter.post("/register/:userNumber", async (req: Request, res: Response) => 
             firstName: generateFastRandomString(5),
             lastName: generateFastRandomString(5),
             username: generateFastRandomString(8),
-            passwordHash: await bcrypt.hash("Test@123", SALT)
+            passwordHash: await bcrypt.hash("Test@123", SALT),
+            bio: generateFastRandomString(8)
         }
 
         const newUser = await prisma.user.create({

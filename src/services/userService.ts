@@ -107,6 +107,7 @@ export const getPostByPostId = async (postId: string, userId?: string) => {
                 select: {
                     avatarFileName: true,
                     username: true,
+                    id: true
                 }
             }
         },

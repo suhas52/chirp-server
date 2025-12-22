@@ -22,5 +22,6 @@ export const validateInput = (schema: ZodType) => (req: Request, res: Response, 
         const errorMessage = error.issues[0] ? error.issues[0].message : "Unknown error";
         throw new CustomError(errorMessage, 400, errorData)
     }
+    req.validatedInput = parsed.data;
     next();
 }

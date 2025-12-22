@@ -73,7 +73,7 @@ export const getAllPosts = async (take: number, cursor?: string, userId?: string
 
     const postsWithSignedUrl = await Promise.all(
         posts.map(async (post) => {
-            const avatarUrl = await getSignedImageUrl(post.user.avatarFileName)
+            const avatarUrl = await getSignedImageUrl(post.user.avatarFileName, "avatar")
             return { ...post, avatarUrl }
         })
     )
@@ -113,7 +113,7 @@ export const getPostByPostId = async (postId: string, userId?: string) => {
         },
     })
     if (!post) throw new CustomError("Post does not exist", 400)
-    const avatarUrl = await getSignedImageUrl(post.user.avatarFileName)
+    const avatarUrl = await getSignedImageUrl(post.user.avatarFileName, "avatar")
 
     return { ...post, avatarUrl }
 }
@@ -183,7 +183,7 @@ export const getCommentsByPostId = async (postId: string, take: number, cursor?:
 
     const comemntsWithSignedUrl = await Promise.all(
         comments.map(async (comment) => {
-            const avatarUrl = await getSignedImageUrl(comment.user.avatarFileName)
+            const avatarUrl = await getSignedImageUrl(comment.user.avatarFileName, "avatar")
             return { ...comment, avatarUrl }
         })
     )

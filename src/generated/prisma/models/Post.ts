@@ -41,6 +41,7 @@ export type PostMinAggregateOutputType = {
   updatedAt: Date | null
   userId: string | null
   cursorId: number | null
+  imgFileName: string | null
 }
 
 export type PostMaxAggregateOutputType = {
@@ -50,6 +51,7 @@ export type PostMaxAggregateOutputType = {
   updatedAt: Date | null
   userId: string | null
   cursorId: number | null
+  imgFileName: string | null
 }
 
 export type PostCountAggregateOutputType = {
@@ -59,6 +61,7 @@ export type PostCountAggregateOutputType = {
   updatedAt: number
   userId: number
   cursorId: number
+  imgFileName: number
   _all: number
 }
 
@@ -78,6 +81,7 @@ export type PostMinAggregateInputType = {
   updatedAt?: true
   userId?: true
   cursorId?: true
+  imgFileName?: true
 }
 
 export type PostMaxAggregateInputType = {
@@ -87,6 +91,7 @@ export type PostMaxAggregateInputType = {
   updatedAt?: true
   userId?: true
   cursorId?: true
+  imgFileName?: true
 }
 
 export type PostCountAggregateInputType = {
@@ -96,6 +101,7 @@ export type PostCountAggregateInputType = {
   updatedAt?: true
   userId?: true
   cursorId?: true
+  imgFileName?: true
   _all?: true
 }
 
@@ -192,6 +198,7 @@ export type PostGroupByOutputType = {
   updatedAt: Date
   userId: string
   cursorId: number
+  imgFileName: string | null
   _count: PostCountAggregateOutputType | null
   _avg: PostAvgAggregateOutputType | null
   _sum: PostSumAggregateOutputType | null
@@ -224,6 +231,7 @@ export type PostWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Post"> | Date | string
   userId?: Prisma.StringFilter<"Post"> | string
   cursorId?: Prisma.IntFilter<"Post"> | number
+  imgFileName?: Prisma.StringNullableFilter<"Post"> | string | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   likes?: Prisma.LikeListRelationFilter
   retweets?: Prisma.RetweetListRelationFilter
@@ -237,6 +245,7 @@ export type PostOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   cursorId?: Prisma.SortOrder
+  imgFileName?: Prisma.SortOrderInput | Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
   likes?: Prisma.LikeOrderByRelationAggregateInput
   retweets?: Prisma.RetweetOrderByRelationAggregateInput
@@ -253,6 +262,7 @@ export type PostWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"Post"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Post"> | Date | string
   userId?: Prisma.StringFilter<"Post"> | string
+  imgFileName?: Prisma.StringNullableFilter<"Post"> | string | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   likes?: Prisma.LikeListRelationFilter
   retweets?: Prisma.RetweetListRelationFilter
@@ -266,6 +276,7 @@ export type PostOrderByWithAggregationInput = {
   updatedAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   cursorId?: Prisma.SortOrder
+  imgFileName?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.PostCountOrderByAggregateInput
   _avg?: Prisma.PostAvgOrderByAggregateInput
   _max?: Prisma.PostMaxOrderByAggregateInput
@@ -283,6 +294,7 @@ export type PostScalarWhereWithAggregatesInput = {
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Post"> | Date | string
   userId?: Prisma.StringWithAggregatesFilter<"Post"> | string
   cursorId?: Prisma.IntWithAggregatesFilter<"Post"> | number
+  imgFileName?: Prisma.StringNullableWithAggregatesFilter<"Post"> | string | null
 }
 
 export type PostCreateInput = {
@@ -291,6 +303,7 @@ export type PostCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   cursorId?: number
+  imgFileName?: string | null
   user: Prisma.UserCreateNestedOneWithoutPostsInput
   likes?: Prisma.LikeCreateNestedManyWithoutPostInput
   retweets?: Prisma.RetweetCreateNestedManyWithoutPostInput
@@ -304,6 +317,7 @@ export type PostUncheckedCreateInput = {
   updatedAt?: Date | string
   userId: string
   cursorId?: number
+  imgFileName?: string | null
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutPostInput
   retweets?: Prisma.RetweetUncheckedCreateNestedManyWithoutPostInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutPostInput
@@ -314,6 +328,7 @@ export type PostUpdateInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  imgFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutPostsNestedInput
   likes?: Prisma.LikeUpdateManyWithoutPostNestedInput
   retweets?: Prisma.RetweetUpdateManyWithoutPostNestedInput
@@ -327,6 +342,7 @@ export type PostUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   cursorId?: Prisma.IntFieldUpdateOperationsInput | number
+  imgFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   likes?: Prisma.LikeUncheckedUpdateManyWithoutPostNestedInput
   retweets?: Prisma.RetweetUncheckedUpdateManyWithoutPostNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutPostNestedInput
@@ -339,6 +355,7 @@ export type PostCreateManyInput = {
   updatedAt?: Date | string
   userId: string
   cursorId?: number
+  imgFileName?: string | null
 }
 
 export type PostUpdateManyMutationInput = {
@@ -346,6 +363,7 @@ export type PostUpdateManyMutationInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  imgFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type PostUncheckedUpdateManyInput = {
@@ -355,6 +373,7 @@ export type PostUncheckedUpdateManyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   cursorId?: Prisma.IntFieldUpdateOperationsInput | number
+  imgFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type PostListRelationFilter = {
@@ -374,6 +393,7 @@ export type PostCountOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   cursorId?: Prisma.SortOrder
+  imgFileName?: Prisma.SortOrder
 }
 
 export type PostAvgOrderByAggregateInput = {
@@ -387,6 +407,7 @@ export type PostMaxOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   cursorId?: Prisma.SortOrder
+  imgFileName?: Prisma.SortOrder
 }
 
 export type PostMinOrderByAggregateInput = {
@@ -396,6 +417,7 @@ export type PostMinOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   cursorId?: Prisma.SortOrder
+  imgFileName?: Prisma.SortOrder
 }
 
 export type PostSumOrderByAggregateInput = {
@@ -505,6 +527,7 @@ export type PostCreateWithoutUserInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   cursorId?: number
+  imgFileName?: string | null
   likes?: Prisma.LikeCreateNestedManyWithoutPostInput
   retweets?: Prisma.RetweetCreateNestedManyWithoutPostInput
   comments?: Prisma.CommentCreateNestedManyWithoutPostInput
@@ -516,6 +539,7 @@ export type PostUncheckedCreateWithoutUserInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   cursorId?: number
+  imgFileName?: string | null
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutPostInput
   retweets?: Prisma.RetweetUncheckedCreateNestedManyWithoutPostInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutPostInput
@@ -557,6 +581,7 @@ export type PostScalarWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Post"> | Date | string
   userId?: Prisma.StringFilter<"Post"> | string
   cursorId?: Prisma.IntFilter<"Post"> | number
+  imgFileName?: Prisma.StringNullableFilter<"Post"> | string | null
 }
 
 export type PostCreateWithoutLikesInput = {
@@ -565,6 +590,7 @@ export type PostCreateWithoutLikesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   cursorId?: number
+  imgFileName?: string | null
   user: Prisma.UserCreateNestedOneWithoutPostsInput
   retweets?: Prisma.RetweetCreateNestedManyWithoutPostInput
   comments?: Prisma.CommentCreateNestedManyWithoutPostInput
@@ -577,6 +603,7 @@ export type PostUncheckedCreateWithoutLikesInput = {
   updatedAt?: Date | string
   userId: string
   cursorId?: number
+  imgFileName?: string | null
   retweets?: Prisma.RetweetUncheckedCreateNestedManyWithoutPostInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutPostInput
 }
@@ -602,6 +629,7 @@ export type PostUpdateWithoutLikesInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  imgFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutPostsNestedInput
   retweets?: Prisma.RetweetUpdateManyWithoutPostNestedInput
   comments?: Prisma.CommentUpdateManyWithoutPostNestedInput
@@ -614,6 +642,7 @@ export type PostUncheckedUpdateWithoutLikesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   cursorId?: Prisma.IntFieldUpdateOperationsInput | number
+  imgFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   retweets?: Prisma.RetweetUncheckedUpdateManyWithoutPostNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutPostNestedInput
 }
@@ -624,6 +653,7 @@ export type PostCreateWithoutRetweetsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   cursorId?: number
+  imgFileName?: string | null
   user: Prisma.UserCreateNestedOneWithoutPostsInput
   likes?: Prisma.LikeCreateNestedManyWithoutPostInput
   comments?: Prisma.CommentCreateNestedManyWithoutPostInput
@@ -636,6 +666,7 @@ export type PostUncheckedCreateWithoutRetweetsInput = {
   updatedAt?: Date | string
   userId: string
   cursorId?: number
+  imgFileName?: string | null
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutPostInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutPostInput
 }
@@ -661,6 +692,7 @@ export type PostUpdateWithoutRetweetsInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  imgFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutPostsNestedInput
   likes?: Prisma.LikeUpdateManyWithoutPostNestedInput
   comments?: Prisma.CommentUpdateManyWithoutPostNestedInput
@@ -673,6 +705,7 @@ export type PostUncheckedUpdateWithoutRetweetsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   cursorId?: Prisma.IntFieldUpdateOperationsInput | number
+  imgFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   likes?: Prisma.LikeUncheckedUpdateManyWithoutPostNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutPostNestedInput
 }
@@ -683,6 +716,7 @@ export type PostCreateWithoutCommentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   cursorId?: number
+  imgFileName?: string | null
   user: Prisma.UserCreateNestedOneWithoutPostsInput
   likes?: Prisma.LikeCreateNestedManyWithoutPostInput
   retweets?: Prisma.RetweetCreateNestedManyWithoutPostInput
@@ -695,6 +729,7 @@ export type PostUncheckedCreateWithoutCommentsInput = {
   updatedAt?: Date | string
   userId: string
   cursorId?: number
+  imgFileName?: string | null
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutPostInput
   retweets?: Prisma.RetweetUncheckedCreateNestedManyWithoutPostInput
 }
@@ -720,6 +755,7 @@ export type PostUpdateWithoutCommentsInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  imgFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutPostsNestedInput
   likes?: Prisma.LikeUpdateManyWithoutPostNestedInput
   retweets?: Prisma.RetweetUpdateManyWithoutPostNestedInput
@@ -732,6 +768,7 @@ export type PostUncheckedUpdateWithoutCommentsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   cursorId?: Prisma.IntFieldUpdateOperationsInput | number
+  imgFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   likes?: Prisma.LikeUncheckedUpdateManyWithoutPostNestedInput
   retweets?: Prisma.RetweetUncheckedUpdateManyWithoutPostNestedInput
 }
@@ -742,6 +779,7 @@ export type PostCreateManyUserInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   cursorId?: number
+  imgFileName?: string | null
 }
 
 export type PostUpdateWithoutUserInput = {
@@ -749,6 +787,7 @@ export type PostUpdateWithoutUserInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  imgFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   likes?: Prisma.LikeUpdateManyWithoutPostNestedInput
   retweets?: Prisma.RetweetUpdateManyWithoutPostNestedInput
   comments?: Prisma.CommentUpdateManyWithoutPostNestedInput
@@ -760,6 +799,7 @@ export type PostUncheckedUpdateWithoutUserInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   cursorId?: Prisma.IntFieldUpdateOperationsInput | number
+  imgFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   likes?: Prisma.LikeUncheckedUpdateManyWithoutPostNestedInput
   retweets?: Prisma.RetweetUncheckedUpdateManyWithoutPostNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutPostNestedInput
@@ -771,6 +811,7 @@ export type PostUncheckedUpdateManyWithoutUserInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   cursorId?: Prisma.IntFieldUpdateOperationsInput | number
+  imgFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -829,6 +870,7 @@ export type PostSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   updatedAt?: boolean
   userId?: boolean
   cursorId?: boolean
+  imgFileName?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   likes?: boolean | Prisma.Post$likesArgs<ExtArgs>
   retweets?: boolean | Prisma.Post$retweetsArgs<ExtArgs>
@@ -843,6 +885,7 @@ export type PostSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   updatedAt?: boolean
   userId?: boolean
   cursorId?: boolean
+  imgFileName?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["post"]>
 
@@ -853,6 +896,7 @@ export type PostSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   updatedAt?: boolean
   userId?: boolean
   cursorId?: boolean
+  imgFileName?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["post"]>
 
@@ -863,9 +907,10 @@ export type PostSelectScalar = {
   updatedAt?: boolean
   userId?: boolean
   cursorId?: boolean
+  imgFileName?: boolean
 }
 
-export type PostOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "content" | "createdAt" | "updatedAt" | "userId" | "cursorId", ExtArgs["result"]["post"]>
+export type PostOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "content" | "createdAt" | "updatedAt" | "userId" | "cursorId" | "imgFileName", ExtArgs["result"]["post"]>
 export type PostInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   likes?: boolean | Prisma.Post$likesArgs<ExtArgs>
@@ -895,6 +940,7 @@ export type $PostPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     updatedAt: Date
     userId: string
     cursorId: number
+    imgFileName: string | null
   }, ExtArgs["result"]["post"]>
   composites: {}
 }
@@ -1328,6 +1374,7 @@ export interface PostFieldRefs {
   readonly updatedAt: Prisma.FieldRef<"Post", 'DateTime'>
   readonly userId: Prisma.FieldRef<"Post", 'String'>
   readonly cursorId: Prisma.FieldRef<"Post", 'Int'>
+  readonly imgFileName: Prisma.FieldRef<"Post", 'String'>
 }
     
 

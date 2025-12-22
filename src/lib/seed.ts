@@ -17,5 +17,4 @@ export async function createRandomUser() {
 
 export function createPost() {
     return faker.lorem.lines(3)
-
 }

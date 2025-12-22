@@ -106,7 +106,8 @@ export const PostScalarFieldEnum = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   userId: 'userId',
-  cursorId: 'cursorId'
+  cursorId: 'cursorId',
+  imgFileName: 'imgFileName'
 } as const
 
 export type PostScalarFieldEnum = (typeof PostScalarFieldEnum)[keyof typeof PostScalarFieldEnum]

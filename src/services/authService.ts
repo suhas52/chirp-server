@@ -61,7 +61,7 @@ export const getUser = async (id: string) => {
         }
     })
     if (!user) throw new CustomError("User does not exist", 401)
-    const avatarUrl = await getSignedImageUrl(user.avatarFileName)
+    const avatarUrl = await getSignedImageUrl(user.avatarFileName, "avatar")
     return { ...user, avatarUrl };
 }
 
@@ -81,7 +81,7 @@ export const updateProfile = async (id: string, formData: types.profileFormData)
 export const updateAvatar = async (image: Express.Multer.File, id: string) => {
     if (!allowedFileTypes.includes(image.mimetype)) throw new CustomError("Invalid file type", 400)
     const processedImageBuffer = await sharp(image.buffer).resize(200).png().toBuffer();
-    const avatarFileName = await uploadToCloud(processedImageBuffer);
+    const avatarFileName = await uploadToCloud(processedImageBuffer, "avatar");
     const updatedAvatarFileName = await prisma.user.update({
         where: { id: id },
         data: {

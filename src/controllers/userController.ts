@@ -5,10 +5,9 @@ import * as userService from '../services/userService.ts'
 
 
 export const postPost = async (req: Request, res: Response, next: NextFunction) => {
-    const formData = req.body;
-    const decodedUser = req.decodedUser;
-    if (!formData) return next(new CustomError("Invalid input", 400))
-    const newPost = await userService.postPost(decodedUser.id, formData)
+    const { decodedUser, validatedInput } = req
+
+    const newPost = await userService.postPost(decodedUser.id, validatedInput)
     return successResponse(res, 201, newPost);
 }
 
@@ -40,13 +39,10 @@ export const getPostsByUserId = async (req: Request, res: Response, next: NextFu
 }
 
 export const postCommentByPostId = async (req: Request, res: Response, next: NextFunction) => {
-    const formData = req.body;
+    const { decodedUser, validatedInput } = req
     const { postId } = req.params;
-    const decodedUser = req.decodedUser;
     if (!postId) return next(new CustomError("Invalid Request", 400))
-    if (!formData) return next(new CustomError("Unable to post an empty form", 400))
-
-    const newComment = await userService.postCommentByPostId(decodedUser.id, postId, formData)
+    const newComment = await userService.postCommentByPostId(decodedUser.id, postId, validatedInput)
     return successResponse(res, 201, newComment)
 }
 
@@ -63,7 +59,7 @@ export const getCommentsByPostId = async (req: Request, res: Response, next: Nex
 export const likePost = async (req: Request, res: Response, next: NextFunction) => {
     const { postId } = req.params;
     if (!postId) return next(new CustomError("Invalid request", 400))
-    const decodedUser = req.decodedUser;
+    const { decodedUser } = req;
     const newLikePost = await userService.likePost(decodedUser.id, postId);
     return successResponse(res, 200, newLikePost)
 }
@@ -71,7 +67,7 @@ export const likePost = async (req: Request, res: Response, next: NextFunction) 
 export const unlikePost = async (req: Request, res: Response, next: NextFunction) => {
     const { likeId } = req.params;
     if (!likeId) return next(new CustomError("Invalid request", 400));
-    const decodedUser = req.decodedUser;
+    const { decodedUser } = req;
     const unlikePost = await userService.unlikePost(decodedUser.id, likeId)
     return successResponse(res, 204)
 }
@@ -79,7 +75,7 @@ export const unlikePost = async (req: Request, res: Response, next: NextFunction
 export const retweetPost = async (req: Request, res: Response, next: NextFunction) => {
     const { postId } = req.params;
     if (!postId) return next(new CustomError("Invalid request", 400));
-    const decodedUser = req.decodedUser;
+    const { decodedUser } = req;
     const newRetweet = await userService.retweetPost(decodedUser.id, postId)
     return successResponse(res, 200, newRetweet)
 }
@@ -87,7 +83,7 @@ export const retweetPost = async (req: Request, res: Response, next: NextFunctio
 export const unRetweetPost = async (req: Request, res: Response, next: NextFunction) => {
     const { retweetId } = req.params;
     if (!retweetId) return next(new CustomError("Invalid request", 400));
-    const decodedUser = req.decodedUser;
+    const { decodedUser } = req;
     const unRetweetPost = await userService.unRetweetPost(decodedUser.id, retweetId)
     return successResponse(res, 204)
 }

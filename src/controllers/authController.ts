@@ -6,14 +6,14 @@ import * as jwtService from "../services/jwtService.ts";
 
 
 export const register = async (req: Request, res: Response, next: NextFunction) => {
-    const { body } = req
-    const newUser = await authService.register(body)
+    const { validatedInput } = req
+    const newUser = await authService.register(validatedInput)
     return successResponse(res, 201, newUser)
 }
 
 export const login = async (req: Request, res: Response, next: NextFunction) => {
-    const { body } = req
-    const user = await authService.login(body)
+    const { validatedInput } = req
+    const user = await authService.login(validatedInput)
     const accessToken = jwtService.signJwt({ username: user.username, id: user.id })
 
     res.cookie("token", accessToken, {
@@ -49,9 +49,8 @@ export const getUser = async (req: Request, res: Response, next: NextFunction) =
 }
 
 export const profile = async (req: Request, res: Response, next: NextFunction) => {
-    const { body, decodedUser } = req
-    if (!body) return next(new CustomError("Invalid input", 400))
-    const modifiedUser = await authService.updateProfile(decodedUser.id, body)
+    const { validatedInput, decodedUser } = req
+    const modifiedUser = await authService.updateProfile(decodedUser.id, validatedInput)
     return successResponse(res, 200, modifiedUser)
 }
 

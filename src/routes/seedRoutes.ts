@@ -4,7 +4,6 @@ import { successResponse } from "../lib/response.ts";
 import { createPost, createRandomUser } from "../lib/seed.ts";
 import { CustomError } from "../lib/customError.ts";
 
-
 export const seedRouter = Router();
 
 seedRouter.post("/register/:userNumber", async (req: Request, res: Response) => {

@@ -21,13 +21,13 @@ function generateRandomImageName(bytes = 32) {
     return crypto.randomBytes(bytes).toString('hex')
 }
 
-export async function uploadToCloud(processedImageBuffer: Buffer) {
+export async function uploadToCloud(processedImageBuffer: Buffer, type: "avatar" | "content") {
     const imageName = `${generateRandomImageName()}.png`;
     const params = {
         Bucket: bucketName,
-        Key: imageName,
+        Key: type === "avatar" ? `avatar-images/${imageName}` : `content-images/${imageName}`,
         Body: processedImageBuffer,
-        ContentType: "image/png"
+        ContentType: "image/png",
     };
 
     const command = new PutObjectCommand(params);
@@ -35,10 +35,10 @@ export async function uploadToCloud(processedImageBuffer: Buffer) {
     return imageName;
 }
 
-export async function getSignedImageUrl(imageName: string) {
+export async function getSignedImageUrl(imageName: string, type: "avatar" | "content") {
     const getObjectParams = {
         Bucket: bucketName,
-        Key: imageName,
+        Key: type === "avatar" ? `avatar-images/${imageName}` : `content-images/${imageName}`,
     }
     const command = new GetObjectCommand(getObjectParams);
     const url = await getSignedUrl(s3, command, { expiresIn: 3600 });

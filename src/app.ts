@@ -7,6 +7,7 @@ import cookieParser from 'cookie-parser'
 import envConf from './lib/envConfig.ts'
 import { seedRouter } from './routes/seedRoutes.ts';
 import { globalErrorHandler } from './middleware/errorMiddleware.ts';
+import { apiRateLimit, apiRateThrottle } from './lib/rateLimiter.ts';
 
 
 const port = envConf.SERVER_PORT;
@@ -24,8 +25,8 @@ app.use(express.urlencoded())
 app.use(express.json())
 app.use(cookieParser())
 app.use(cors(corsOptions))
-app.use("/api/auth", authRouter)
-app.use("/api/user", userRouter)
+app.use("/api/auth", apiRateThrottle, apiRateLimit, authRouter)
+app.use("/api/user", apiRateThrottle, apiRateLimit, userRouter)
 app.use("/api/seed", seedRouter)
 app.use(globalErrorHandler)
 

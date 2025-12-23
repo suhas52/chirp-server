@@ -6,10 +6,11 @@ import type z from 'zod';
 import type { postSchema } from '../zodSchemas/userSchemas.ts';
 
 import { getSignedImageUrl } from '../lib/s3Config.ts';
+import type { File } from 'buffer';
 
 
 
-export const postPost = async (id: string, formData: z.infer<typeof postSchema>) => {
+export const postPost = async (id: string, formData: z.infer<typeof postSchema>, file: Express.Multer.File | undefined) => {
     if (profanity.exists(formData.content)) throw new CustomError("Profanity is not allowed", 400)
     const newPost = await prisma.post.create({
         data: {

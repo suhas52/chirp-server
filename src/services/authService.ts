@@ -2,15 +2,12 @@ import bcrypt from 'bcryptjs'
 import { prisma } from '../lib/prismaConfig.ts'
 import envConf from '../lib/envConfig.ts'
 import { CustomError } from '../lib/customError.ts'
-import sharp from 'sharp';
 import { getSignedImageUrl, uploadToCloud } from "../lib/s3Config.ts";
 import * as types from '../lib/types.ts'
+import processImage from '../lib/processImage.ts';
 
 const salt = envConf.SALT
 
-
-
-const allowedFileTypes = ["image/jpeg", "image/png", "image/webp"];
 
 export const register = async (data: types.registerData) => {
     const passwordHash = await bcrypt.hash(data.password, salt)
@@ -79,8 +76,7 @@ export const updateProfile = async (id: string, formData: types.profileFormData)
 }
 
 export const updateAvatar = async (image: Express.Multer.File, id: string) => {
-    if (!allowedFileTypes.includes(image.mimetype)) throw new CustomError("Invalid file type", 400)
-    const processedImageBuffer = await sharp(image.buffer).resize(200).png().toBuffer();
+    const processedImageBuffer = await processImage(image);
     const avatarFileName = await uploadToCloud(processedImageBuffer, "avatar");
     const updatedAvatarFileName = await prisma.user.update({
         where: { id: id },

@@ -5,13 +5,13 @@ import { CustomError } from './customError.ts'
 
 export const apiRateThrottle = slowDown({
     windowMs: 5 * 60 * 1000,
-    delayAfter: 5,
-    delayMs: (hits) => hits * 100,
+    delayAfter: 1000,
+    delayMs: (hits) => hits * 1,
 })
 
 export const apiRateLimit = rateLimit({
     windowMs: 15 * 60 * 1000,
-    limit: 100,
+    limit: 10000,
     standardHeaders: 'draft-8',
     legacyHeaders: false,
     ipv6Subnet: 56,

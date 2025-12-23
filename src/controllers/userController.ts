@@ -5,9 +5,8 @@ import * as userService from '../services/userService.ts'
 
 
 export const postPost = async (req: Request, res: Response, next: NextFunction) => {
-    const { decodedUser, validatedInput } = req
-
-    const newPost = await userService.postPost(decodedUser.id, validatedInput)
+    const { decodedUser, validatedInput, file } = req
+    const newPost = await userService.postPost(decodedUser.id, validatedInput, file)
     return successResponse(res, 201, newPost);
 }
 

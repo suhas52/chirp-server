@@ -14,7 +14,7 @@ function formatZodErrors(error: ZodError) {
 
 
 export const validateInput = (schema: ZodType) => (req: Request, res: Response, next: NextFunction) => {
-
+    console.log(req.body)
     const parsed = schema.safeParse(req.body);
     if (!parsed.success) {
         const error: ZodError = parsed.error;

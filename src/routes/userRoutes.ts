@@ -4,10 +4,11 @@ import { postSchema } from "../zodSchemas/userSchemas.ts";
 import { validateInput } from "../middleware/validateInputMiddleware.ts";
 import * as controller from "../controllers/userController.ts";
 import { validateJwt } from "../middleware/jwtMiddleware.ts";
+import { multerUpload } from "../lib/multerConfig.ts";
 
 export const userRouter = Router();
 
-userRouter.post("/post", validateInput(postSchema), validateJwt(), controller.postPost)
+userRouter.post("/post", multerUpload.single('post-image'), validateInput(postSchema), validateJwt(), controller.postPost)
 userRouter.get("/posts", controller.getAllPosts)
 userRouter.get("/post/:postId", controller.getPostByPostId)
 userRouter.get("/posts/:userId", controller.getPostsByUserId)

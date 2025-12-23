@@ -4,24 +4,25 @@ import { CustomError } from "../lib/customError.ts";
 import { decodeCursor } from "../lib/encodeCursor.ts";
 import type z from 'zod';
 import type { postSchema } from '../zodSchemas/userSchemas.ts';
-
-import { getSignedImageUrl } from '../lib/s3Config.ts';
-import type { File } from 'buffer';
-
+import { getSignedImageUrl, uploadToCloud } from '../lib/s3Config.ts';
+import processImage from '../lib/processImage.ts';
 
 
 export const postPost = async (id: string, formData: z.infer<typeof postSchema>, file: Express.Multer.File | undefined) => {
     if (profanity.exists(formData.content)) throw new CustomError("Profanity is not allowed", 400)
+    const processedImageBuffer = file ? await processImage(file) : null
+    const imgFileName = processedImageBuffer ? await uploadToCloud(processedImageBuffer, "content") : null
     const newPost = await prisma.post.create({
         data: {
-            userId: id, ...formData
+            userId: id, ...formData, imgFileName
         },
         select: {
             id: true,
             content: true,
             createdAt: true,
             updatedAt: true,
-            userId: true
+            userId: true,
+            imgFileName: true,
         }
     })
     return newPost;
@@ -41,6 +42,7 @@ export const getAllPosts = async (take: number, cursor?: string, userId?: string
             content: true,
             updatedAt: true,
             userId: true,
+            imgFileName: true,
             cursorId: true,
             _count: {
                 select: { likes: true, retweets: true }
@@ -75,7 +77,8 @@ export const getAllPosts = async (take: number, cursor?: string, userId?: string
     const postsWithSignedUrl = await Promise.all(
         posts.map(async (post) => {
             const avatarUrl = await getSignedImageUrl(post.user.avatarFileName, "avatar")
-            return { ...post, avatarUrl }
+            const postImageUrl = post.imgFileName ? await getSignedImageUrl(post.imgFileName, "content") : null
+            return { ...post, avatarUrl, postImageUrl }
         })
     )
 
@@ -90,7 +93,7 @@ export const getPostByPostId = async (postId: string, userId?: string) => {
             id: postId
         },
         select: {
-            id: true, content: true, updatedAt: true, userId: true, cursorId: true,
+            id: true, content: true, updatedAt: true, userId: true, cursorId: true, imgFileName: true,
             _count: {
                 select: { likes: true, retweets: true, }
             },
@@ -115,8 +118,8 @@ export const getPostByPostId = async (postId: string, userId?: string) => {
     })
     if (!post) throw new CustomError("Post does not exist", 400)
     const avatarUrl = await getSignedImageUrl(post.user.avatarFileName, "avatar")
-
-    return { ...post, avatarUrl }
+    const postImageUrl = post.imgFileName ? await getSignedImageUrl(post.imgFileName, "content") : null
+    return { ...post, avatarUrl, postImageUrl }
 }
 
 export const getPostsByUserId = async (userId: string, take: number, cursor?: string) => {
@@ -124,6 +127,9 @@ export const getPostsByUserId = async (userId: string, take: number, cursor?: st
     const posts = await prisma.post.findMany({
         orderBy: { cursorId: 'asc' },
         take: take + 1,
+        select: {
+            id: true, content: true, updatedAt: true, userId: true, cursorId: true, imgFileName: true,
+        },
         where: { userId: userId },
         ...(cursor && {
             cursor: { cursorId: decodeCursor(cursor) }
@@ -136,6 +142,7 @@ export const getPostsByUserId = async (userId: string, take: number, cursor?: st
         const nextItem = posts.pop();
         nextCursor = nextItem?.cursorId
     }
+
 
     return { posts, nextCursor }
 }

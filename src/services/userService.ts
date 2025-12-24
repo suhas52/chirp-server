@@ -128,7 +128,19 @@ export const getPostsByUserId = async (userId: string, take: number, cursor?: st
         orderBy: { cursorId: 'asc' },
         take: take + 1,
         select: {
-            id: true, content: true, updatedAt: true, userId: true, cursorId: true, imgFileName: true,
+            id: true, content: true, updatedAt: true, userId: true, cursorId: true, imgFileName: true, user: {
+                select: { username: true }
+            }, likes: {
+                where: { userId },
+                select: { id: true }
+            },
+            retweets: {
+                where: { userId },
+                select: { id: true }
+            },
+            _count: {
+                select: { likes: true, retweets: true }
+            },
         },
         where: { userId: userId },
         ...(cursor && {
@@ -136,14 +148,15 @@ export const getPostsByUserId = async (userId: string, take: number, cursor?: st
         })
 
     })
+
     if (posts.length === 0) throw new CustomError("This user either does not exist or does not have any posts", 400)
     let nextCursor = null;
-    if (posts.length > take) {
+    if (posts?.length > take) {
         const nextItem = posts.pop();
         nextCursor = nextItem?.cursorId
     }
 
-
+    console.log({ posts, nextCursor })
     return { posts, nextCursor }
 }
 

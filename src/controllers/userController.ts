@@ -86,3 +86,10 @@ export const unRetweetPost = async (req: Request, res: Response, next: NextFunct
     const unRetweetPost = await userService.unRetweetPost(decodedUser.id, retweetId)
     return successResponse(res, 204)
 }
+
+export const deletePost = async (req: Request, res: Response, next: NextFunction) => {
+    const { decodedUser } = req;
+    const { postId } = req.params;
+    const deletedPost = await userService.deletePost(decodedUser, postId!);
+    return successResponse(res, 204)
+}

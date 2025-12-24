@@ -242,7 +242,13 @@ export const unRetweetPost = async (userId: string, retweetId: string) => {
         where: { id: retweetId, userId }
     });
     if (unRetweeted.count === 0) throw new CustomError("retweet did not exist or did not belong to the user", 400)
-
-
     return unRetweeted
+}
+
+export const deletePost = async (userId: string, postId: string) => {
+    const deletedPost = await prisma.post.deleteMany({
+        where: { id: postId, userId }
+    })
+    if (deletedPost.count === 0) throw new CustomError("Post did not exist or did not belong to the user", 400)
+    return deletedPost
 }

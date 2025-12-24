@@ -1,8 +1,6 @@
 import * as zod from "zod";
 
 
-
-
 const nameField = zod.string().min(3, "First Name must be atleast 3 letters").max(10, "First Name must be 10 letters max")
 const usernameField = zod.string().min(4, "Username must be atleast 4 letters").max(15, "Username cannot be over 15 letters")
 

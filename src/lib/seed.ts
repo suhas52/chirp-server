@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker'
-import envConf from './envConfig.ts';
+import envConf from '../config/envConfig.ts';
 import bcrypt from 'bcryptjs';
 
 

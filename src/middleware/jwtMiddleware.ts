@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import { CustomError } from "../lib/customError.ts";
-import envConf from "../lib/envConfig.ts";
+import envConf from "../config/envConfig.ts";
 import jwt from 'jsonwebtoken'
 import type { DecodedUser } from "../lib/types.ts";
 

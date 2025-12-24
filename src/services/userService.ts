@@ -1,10 +1,10 @@
 import { profanity } from '@2toad/profanity';
-import { prisma } from "../lib/prismaConfig.ts";
+import { prisma } from "../config/prismaConfig.ts";
 import { CustomError } from "../lib/customError.ts";
 import { decodeCursor } from "../lib/encodeCursor.ts";
 import type z from 'zod';
 import type { postSchema } from '../zodSchemas/userSchemas.ts';
-import { getSignedImageUrl, uploadToCloud } from '../lib/s3Config.ts';
+import { getSignedImageUrl, uploadToCloud } from '../lib/cloudInteraction.ts';
 import processImage from '../lib/processImage.ts';
 
 
@@ -207,14 +207,12 @@ export const likePost = async (userId: string, postId: string) => {
 }
 
 export const unlikePost = async (userId: string, likeId: string) => {
-    const like = await prisma.like.findUnique({
-        where: { id: likeId }
+
+    const unliked = await prisma.like.deleteMany({
+        where: { id: likeId, userId }
     })
-    if (!like) throw new CustomError("You have not liked this post", 400)
-    if (like.userId !== userId) throw new CustomError("You cannot unlike for others", 400)
-    const unliked = await prisma.like.delete({
-        where: { id: likeId }
-    })
+
+    if (unliked.count === 0) throw new CustomError("like did not exist or did not belong to the user", 400)
     return unliked;
 }
 
@@ -226,13 +224,12 @@ export const retweetPost = async (userId: string, postId: string) => {
 }
 
 export const unRetweetPost = async (userId: string, retweetId: string) => {
-    const retweet = await prisma.retweet.findUnique({
-        where: { id: retweetId }
-    })
-    if (!retweet) throw new CustomError("You have not retweeted this post", 400);
-    if (retweet.userId !== userId) throw new CustomError("You cannot remove a retweet for others", 400)
-    const unRetweeted = await prisma.retweet.delete({
-        where: { id: retweetId }
+
+    const unRetweeted = await prisma.retweet.deleteMany({
+        where: { id: retweetId, userId }
     });
+    if (unRetweeted.count === 0) throw new CustomError("retweet did not exist or did not belong to the user", 400)
+
+
     return unRetweeted
 }

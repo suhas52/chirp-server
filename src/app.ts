@@ -4,7 +4,7 @@ import cors, { type CorsOptions } from 'cors'
 import { authRouter } from './routes/authRoutes.ts';
 import { userRouter } from './routes/userRoutes.ts';
 import cookieParser from 'cookie-parser'
-import envConf from './lib/envConfig.ts'
+import envConf from './config/envConfig.ts'
 import { seedRouter } from './routes/seedRoutes.ts';
 import { globalErrorHandler } from './middleware/errorMiddleware.ts';
 import { apiRateLimit, apiRateThrottle } from './lib/rateLimiter.ts';

@@ -1,21 +1,10 @@
-import { PutObjectCommand, S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
+import { PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import envConf from "./envConfig.ts";
+import envConf from "../config/envConfig.ts";
 import crypto from "crypto";
+import { s3 } from '../config/s3Config.ts'
 
 const bucketName = envConf.BUCKET_NAME;
-const bucketRegion = envConf.BUCKET_REGION;
-const accessKey = envConf.ACCESS_KEY;
-const secretAccessKey = envConf.SECRET_ACCESS_KEY;
-
-
-const s3 = new S3Client({
-    credentials: {
-        accessKeyId: accessKey,
-        secretAccessKey: secretAccessKey
-    },
-    region: bucketRegion,
-})
 
 function generateRandomImageName(bytes = 32) {
     return crypto.randomBytes(bytes).toString('hex')

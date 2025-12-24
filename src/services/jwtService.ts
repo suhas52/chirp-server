@@ -1,4 +1,4 @@
-import envConf from "../lib/envConfig.ts";
+import envConf from "../config/envConfig.ts";
 import jwt from 'jsonwebtoken';
 
 const jwtSecret = envConf.JWT_SECRET;

@@ -8,8 +8,6 @@ export type loginData = zod.infer<typeof loginSchema>
 
 export type profileFormData = zod.infer<typeof profileSchema>
 
-
-
 export interface DecodedUser {
     id: string;
     username: string;

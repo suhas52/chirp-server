@@ -1,8 +1,8 @@
 import bcrypt from 'bcryptjs'
-import { prisma } from '../lib/prismaConfig.ts'
-import envConf from '../lib/envConfig.ts'
+import { prisma } from '../config/prismaConfig.ts'
+import envConf from '../config/envConfig.ts'
 import { CustomError } from '../lib/customError.ts'
-import { getSignedImageUrl, uploadToCloud } from "../lib/s3Config.ts";
+import { getSignedImageUrl, uploadToCloud } from "../lib/cloudInteraction.ts";
 import * as types from '../lib/types.ts'
 import processImage from '../lib/processImage.ts';
 

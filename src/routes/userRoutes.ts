@@ -4,7 +4,7 @@ import { postSchema } from "../zodSchemas/userSchemas.ts";
 import { validateInput } from "../middleware/validateInputMiddleware.ts";
 import * as controller from "../controllers/userController.ts";
 import { validateJwt } from "../middleware/jwtMiddleware.ts";
-import { multerUpload } from "../lib/multerConfig.ts";
+import { multerUpload } from "../config/multerConfig.ts";
 
 export const userRouter = Router();
 

@@ -1,5 +1,5 @@
 import { Router, type NextFunction, type Request, type Response } from "express";
-import { prisma } from '../lib/prismaConfig.ts';
+import { prisma } from '../config/prismaConfig.ts';
 import { successResponse } from "../lib/response.ts";
 import { createPost, createRandomUser } from "../lib/seed.ts";
 import { CustomError } from "../lib/customError.ts";

@@ -3,7 +3,7 @@ import * as controller from "../controllers/authController.ts";
 import { registerSchema, loginSchema, profileSchema } from "../zodSchemas/authSchemas.ts";
 import { validateInput } from "../middleware/validateInputMiddleware.ts";
 import { validateJwt } from "../middleware/jwtMiddleware.ts";
-import { multerUpload } from "../lib/multerConfig.ts";
+import { multerUpload } from "../config/multerConfig.ts";
 
 export const authRouter = Router();
 

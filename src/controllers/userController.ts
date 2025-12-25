@@ -87,36 +87,41 @@ export const unRetweetPost = async (req: Request, res: Response, next: NextFunct
     return successResponse(res, 204)
 }
 
-export const deletePost = async (req: Request, res: Response) => {
+export const deletePost = async (req: Request, res: Response, next: NextFunction) => {
     const { decodedUser } = req;
     const { postId } = req.params;
-    const deletedPost = await userService.deletePost(decodedUser, postId!);
+    if (!postId) return next(new CustomError("postId is required", 400))
+    const deletedPost = await userService.deletePost(decodedUser, postId);
     return successResponse(res, 204)
 }
 
-export const followUser = async (req: Request, res: Response) => {
+export const followUser = async (req: Request, res: Response, next: NextFunction) => {
     const { decodedUser } = req;
     const { userId } = req.params;
-    const newFollow = await userService.followUser(decodedUser.id, userId!)
+    if (!userId) return next(new CustomError("userId is required", 400))
+    const newFollow = await userService.followUser(decodedUser.id, userId)
     return successResponse(res, 200, newFollow)
 }
 
-export const unFollowUser = async (req: Request, res: Response) => {
+export const unFollowUser = async (req: Request, res: Response, next: NextFunction) => {
     const { decodedUser } = req;
     const { userId } = req.params;
-    const unFollow = await userService.unFollowUser(decodedUser.id, userId!)
+    if (!userId) return next(new CustomError("userId is required", 400))
+    const unFollow = await userService.unFollowUser(decodedUser.id, userId)
     return successResponse(res, 204)
 }
 
-export const listFollowers = async (req: Request, res: Response) => {
+export const listFollowers = async (req: Request, res: Response, next: NextFunction) => {
     const { userId } = req.params;
-    const followers = await userService.listFollowers(userId!)
+    if (!userId) return next(new CustomError("userId is required", 400))
+    const followers = await userService.listFollowers(userId)
     console.log(followers)
     return successResponse(res, 200, followers)
 }
 
-export const listFollowing = async (req: Request, res: Response) => {
+export const listFollowing = async (req: Request, res: Response, next: NextFunction) => {
     const { userId } = req.params;
+    if (!userId) return next(new CustomError("userId is required", 400))
     const following = await userService.listFollowing(userId!)
     return successResponse(res, 200, following)
 }

@@ -45,7 +45,8 @@ export const login = async (data: types.loginData) => {
     return user;
 }
 
-export const getUser = async (id: string) => {
+export const getUser = async (id: string, loggedUserId?: string) => {
+    console.log(loggedUserId)
     const user = await prisma.user.findUnique({
         where: { id },
         select: {
@@ -54,7 +55,13 @@ export const getUser = async (id: string) => {
             lastName: true,
             username: true,
             avatarFileName: true,
-            bio: true
+            bio: true,
+            _count: {
+                select: { followers: true, following: true }
+            },
+            ...(loggedUserId && {
+                followers: { where: { followerId: loggedUserId } }
+            })
         }
     })
     if (!user) throw new CustomError("User does not exist", 401)

@@ -41,10 +41,10 @@ export const me = async (req: Request, res: Response, next: NextFunction) => {
 }
 
 export const getUser = async (req: Request, res: Response, next: NextFunction) => {
-
     const { userId } = req.params
     if (!userId) return next(new CustomError("UserId is required", 400))
-    const user = await authService.getUser(userId)
+    const loggedUserId = req.query.loggedUserId ? String(req.query.loggedUserId) : undefined
+    const user = await authService.getUser(userId, loggedUserId)
     return successResponse(res, 200, { ...user })
 }
 

@@ -21,3 +21,5 @@ userRouter.delete("/post/retweet/:retweetId", validateJwt(), controller.unRetwee
 userRouter.delete("/post/:postId", validateJwt(), controller.deletePost)
 userRouter.post("/follow/:userId", validateJwt(), controller.followUser)
 userRouter.delete("/follow/:userId", validateJwt(), controller.unFollowUser)
+userRouter.get("/followers/:userId", controller.listFollowers)
+userRouter.get("/following/:userId", controller.listFollowing)

@@ -268,9 +268,15 @@ export const unFollowUser = async (followerId: string, followingId: string) => {
 }
 
 export const listFollowers = async (userId: string) => {
-
+    const followers = await prisma.follow.findMany({
+        where: { followingId: userId }
+    })
+    return followers
 }
 
 export const listFollowing = async (userId: string) => {
-
+    const following = await prisma.follow.findMany({
+        where: { followerId: userId }
+    })
+    return following
 }

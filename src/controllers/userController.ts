@@ -109,5 +109,14 @@ export const unFollowUser = async (req: Request, res: Response) => {
 }
 
 export const listFollowers = async (req: Request, res: Response) => {
+    const { userId } = req.params;
+    const followers = await userService.listFollowers(userId!)
+    console.log(followers)
+    return successResponse(res, 200, followers)
+}
 
+export const listFollowing = async (req: Request, res: Response) => {
+    const { userId } = req.params;
+    const following = await userService.listFollowing(userId!)
+    return successResponse(res, 200, following)
 }

@@ -4,13 +4,13 @@ import { successResponse } from '../lib/response.ts';
 import * as userService from '../services/userService.ts'
 
 
-export const postPost = async (req: Request, res: Response, next: NextFunction) => {
+export const postPost = async (req: Request, res: Response) => {
     const { decodedUser, validatedInput, file } = req
     const newPost = await userService.postPost(decodedUser.id, validatedInput, file)
     return successResponse(res, 201, newPost);
 }
 
-export const getAllPosts = async (req: Request, res: Response, next: NextFunction) => {
+export const getAllPosts = async (req: Request, res: Response) => {
     const take = Number(req.query.take) || 10;
     const cursor = req.query.cursor ? String(req.query.cursor) : undefined;
     const userId = req.query.userId ? String(req.query.userId) : undefined;
@@ -87,9 +87,27 @@ export const unRetweetPost = async (req: Request, res: Response, next: NextFunct
     return successResponse(res, 204)
 }
 
-export const deletePost = async (req: Request, res: Response, next: NextFunction) => {
+export const deletePost = async (req: Request, res: Response) => {
     const { decodedUser } = req;
     const { postId } = req.params;
     const deletedPost = await userService.deletePost(decodedUser, postId!);
     return successResponse(res, 204)
+}
+
+export const followUser = async (req: Request, res: Response) => {
+    const { decodedUser } = req;
+    const { userId } = req.params;
+    const newFollow = await userService.followUser(decodedUser.id, userId!)
+    return successResponse(res, 200, newFollow)
+}
+
+export const unFollowUser = async (req: Request, res: Response) => {
+    const { decodedUser } = req;
+    const { userId } = req.params;
+    const unFollow = await userService.unFollowUser(decodedUser.id, userId!)
+    return successResponse(res, 204)
+}
+
+export const listFollowers = async (req: Request, res: Response) => {
+
 }

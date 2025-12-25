@@ -83,8 +83,6 @@ export const getAllPosts = async (take: number, cursor?: string, userId?: string
     )
 
     return { posts: postsWithSignedUrl, nextCursor }
-
-
 }
 
 export const getPostByPostId = async (postId: string, userId?: string) => {
@@ -251,4 +249,28 @@ export const deletePost = async (userId: string, postId: string) => {
     })
     if (deletedPost.count === 0) throw new CustomError("Post did not exist or did not belong to the user", 400)
     return deletedPost
+}
+
+export const followUser = async (followerId: string, followingId: string) => {
+    const newFollow = await prisma.follow.create({
+        data: { followerId, followingId }
+    })
+
+    return newFollow
+}
+
+export const unFollowUser = async (followerId: string, followingId: string) => {
+    const unFollow = await prisma.follow.deleteMany({
+        where: { followerId, followingId }
+    })
+    if (unFollow.count === 0) throw new CustomError("Not followed", 400)
+    return unFollow
+}
+
+export const listFollowers = async (userId: string) => {
+
+}
+
+export const listFollowing = async (userId: string) => {
+
 }

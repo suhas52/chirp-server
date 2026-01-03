@@ -12,19 +12,12 @@ import { apiRateLimit, apiRateThrottle } from './lib/rateLimiter.ts';
 
 const port = envConf.SERVER_PORT;
 const clientUrl = envConf.CLIENT_URL;
-const corsOptions: CorsOptions = {
-    origin: clientUrl,
-    methods: ['GET', 'PUT', 'POST', 'PATCH', 'DELETE'],
-    credentials: true
-}
-
 const app = express();
 
 
 app.use(express.urlencoded())
 app.use(express.json())
 app.use(cookieParser())
-app.use(cors(corsOptions))
 app.use("/api/auth", apiRateThrottle, apiRateLimit, authRouter)
 app.use("/api/user", apiRateThrottle, apiRateLimit, userRouter)
 app.use("/api/seed", seedRouter)

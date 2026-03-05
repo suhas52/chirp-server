@@ -6,7 +6,19 @@ import type z from 'zod';
 import type { postSchema } from '../zodSchemas/userSchemas.ts';
 import { getSignedImageUrl, uploadToCloud } from '../lib/cloudInteraction.ts';
 import processImage from '../lib/processImage.ts';
+import { redisClient } from '../config/redisConfig.ts';
 
+const getCachedSignedUrl = async (fileName: string, type: "avatar" | "content") => {
+    const cacheKey = `${type}:${fileName}`;
+    const cached = await redisClient.get(cacheKey);
+    if (cached) return cached;
+
+    const url = await getSignedImageUrl(fileName, type)
+    await redisClient.set(cacheKey, url, {
+        EX: 60 * 60 * 60
+    })
+    return url
+}
 
 export const postPost = async (id: string, formData: z.infer<typeof postSchema>, file: Express.Multer.File | undefined) => {
     if (profanity.exists(formData.content)) throw new CustomError("Profanity is not allowed", 400)
@@ -76,8 +88,8 @@ export const getAllPosts = async (take: number, cursor?: string, userId?: string
 
     const postsWithSignedUrl = await Promise.all(
         posts.map(async (post) => {
-            const avatarUrl = await getSignedImageUrl(post.user.avatarFileName, "avatar")
-            const postImageUrl = post.imgFileName ? await getSignedImageUrl(post.imgFileName, "content") : null
+            const avatarUrl = await getCachedSignedUrl(post.user.avatarFileName, "avatar")
+            const postImageUrl = post.imgFileName ? await getCachedSignedUrl(post.imgFileName, "content") : null
             return { ...post, avatarUrl, postImageUrl }
         })
     )

@@ -30,6 +30,6 @@ export async function getSignedImageUrl(imageName: string, type: "avatar" | "con
         Key: type === "avatar" ? `avatar-images/${imageName}` : `content-images/${imageName}`,
     }
     const command = new GetObjectCommand(getObjectParams);
-    const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+    const url = await getSignedUrl(s3, command, { expiresIn: 60 * 60 * 60 });
     return url;
 }

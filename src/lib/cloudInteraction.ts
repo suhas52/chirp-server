@@ -3,6 +3,7 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import envConf from "../config/envConfig.ts";
 import crypto from "crypto";
 import { s3 } from '../config/s3Config.ts'
+import { redisClient } from '../config/redisConfig.ts';
 
 const bucketName = envConf.BUCKET_NAME;
 
@@ -32,4 +33,18 @@ export async function getSignedImageUrl(imageName: string, type: "avatar" | "con
     const command = new GetObjectCommand(getObjectParams);
     const url = await getSignedUrl(s3, command, { expiresIn: 60 * 60 * 60 });
     return url;
+}
+
+
+
+export const getCachedSignedUrl = async (fileName: string, type: "avatar" | "content") => {
+    const cacheKey = `${type}:${fileName}`;
+    const cached = await redisClient.get(cacheKey);
+    if (cached) return cached;
+
+    const url = await getSignedImageUrl(fileName, type)
+    await redisClient.set(cacheKey, url, {
+        EX: 60 * 60 * 60
+    })
+    return url
 }

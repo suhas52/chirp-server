@@ -4,21 +4,9 @@ import { CustomError } from "../lib/customError.ts";
 import { decodeCursor } from "../lib/encodeCursor.ts";
 import type z from 'zod';
 import type { postSchema } from '../zodSchemas/userSchemas.ts';
-import { getSignedImageUrl, uploadToCloud } from '../lib/cloudInteraction.ts';
+import { getCachedSignedUrl, getSignedImageUrl, uploadToCloud } from '../lib/cloudInteraction.ts';
 import processImage from '../lib/processImage.ts';
-import { redisClient } from '../config/redisConfig.ts';
 
-const getCachedSignedUrl = async (fileName: string, type: "avatar" | "content") => {
-    const cacheKey = `${type}:${fileName}`;
-    const cached = await redisClient.get(cacheKey);
-    if (cached) return cached;
-
-    const url = await getSignedImageUrl(fileName, type)
-    await redisClient.set(cacheKey, url, {
-        EX: 60 * 60 * 60
-    })
-    return url
-}
 
 export const postPost = async (id: string, formData: z.infer<typeof postSchema>, file: Express.Multer.File | undefined) => {
     if (profanity.exists(formData.content)) throw new CustomError("Profanity is not allowed", 400)

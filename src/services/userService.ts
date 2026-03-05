@@ -4,7 +4,7 @@ import { CustomError } from "../lib/customError.ts";
 import { decodeCursor } from "../lib/encodeCursor.ts";
 import type z from 'zod';
 import type { postSchema } from '../zodSchemas/userSchemas.ts';
-import { getCachedSignedUrl, getSignedImageUrl, uploadToCloud } from '../lib/cloudInteraction.ts';
+import { getCachedSignedUrl, uploadToCloud } from '../lib/cloudInteraction.ts';
 import processImage from '../lib/processImage.ts';
 
 
@@ -115,8 +115,8 @@ export const getPostByPostId = async (postId: string, userId?: string) => {
         },
     })
     if (!post) throw new CustomError("Post does not exist", 400)
-    const avatarUrl = await getSignedImageUrl(post.user.avatarFileName, "avatar")
-    const postImageUrl = post.imgFileName ? await getSignedImageUrl(post.imgFileName, "content") : null
+    const avatarUrl = await getCachedSignedUrl(post.user.avatarFileName, "avatar")
+    const postImageUrl = post.imgFileName ? await getCachedSignedUrl(post.imgFileName, "content") : null
     return { ...post, avatarUrl, postImageUrl }
 }
 
@@ -202,7 +202,7 @@ export const getCommentsByPostId = async (postId: string, take: number, cursor?:
 
     const comemntsWithSignedUrl = await Promise.all(
         comments.map(async (comment) => {
-            const avatarUrl = await getSignedImageUrl(comment.user.avatarFileName, "avatar")
+            const avatarUrl = await getCachedSignedUrl(comment.user.avatarFileName, "avatar")
             return { ...comment, avatarUrl }
         })
     )

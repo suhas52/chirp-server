@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs'
 import { prisma } from '../config/prismaConfig.ts'
 import envConf from '../config/envConfig.ts'
 import { CustomError } from '../lib/customError.ts'
-import { getSignedImageUrl, uploadToCloud } from "../lib/cloudInteraction.ts";
+import { getCachedSignedUrl, uploadToCloud } from "../lib/cloudInteraction.ts";
 import * as types from '../lib/types.ts'
 import processImage from '../lib/processImage.ts';
 
@@ -65,7 +65,7 @@ export const getUser = async (id: string, loggedUserId?: string) => {
         }
     })
     if (!user) throw new CustomError("User does not exist", 401)
-    const avatarUrl = await getSignedImageUrl(user.avatarFileName, "avatar")
+    const avatarUrl = await getCachedSignedUrl(user.avatarFileName, "avatar")
     return { ...user, avatarUrl };
 }
 
